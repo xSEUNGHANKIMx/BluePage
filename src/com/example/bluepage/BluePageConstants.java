@@ -68,4 +68,7 @@ public class BluePageConstants {
     public static final int CONTACTS_SELECTABLE_BUTTON_TYPE_DONE_RETURN_GROUP_ID_ALSO = 101; // Return only Group ID if user selected one group.
     public static final int CONTACTS_SELECTABLE_BUTTON_TYPE_DONE_RETURN_MEMBER_ID_ONLY = 102; // Return just Member ID list.
     public static final int CONTACTS_SELECTABLE_BUTTON_TYPE_OPTION = 103;
+
+    // ACRA
+    public static final String ACRA_MAIL_TO_ADDRESS = "ccomett@gmail.com";
 }

@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">sptt</string>
+    <string name="app_name">Blue Page</string>
     <string name="btn_ok">확인</string>
     <string name="btn_cancel">취소</string>
     <string name="btn_done">완료</string>

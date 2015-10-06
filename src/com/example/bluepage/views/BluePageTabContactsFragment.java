@@ -9,6 +9,19 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.example.bluepage.BluePageConfig;
+import com.example.bluepage.BluePageConstants;
+import com.example.bluepage.R;
+import com.example.bluepage.dbmanager.BluePageContactsDao;
+import com.example.bluepage.model.BluePageContactsModel;
+import com.example.bluepage.utils.BaseListSort;
+import com.example.bluepage.utils.CircularImageView;
+import com.example.bluepage.utils.CustomTextView;
+import com.example.bluepage.utils.IndexableListView;
+import com.example.bluepage.utils.SimpleTextWatcher;
+import com.example.bluepage.utils.StringMatcher;
+import com.example.bluepage.utils.UtilHangul;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -41,19 +54,6 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.bluepage.BluePageConfig;
-import com.example.bluepage.BluePageConstants;
-import com.example.bluepage.R;
-import com.example.bluepage.dbmanager.BluePageContactsDao;
-import com.example.bluepage.model.BluePageContactsModel;
-import com.example.bluepage.utils.BaseListSort;
-import com.example.bluepage.utils.CircularImageView;
-import com.example.bluepage.utils.CustomTextView;
-import com.example.bluepage.utils.IndexableListView;
-import com.example.bluepage.utils.SimpleTextWatcher;
-import com.example.bluepage.utils.StringMatcher;
-import com.example.bluepage.utils.UtilHangul;
 
 public class BluePageTabContactsFragment extends Fragment implements LoaderCallbacks<ArrayList<BluePageContactsModel>> {
 
@@ -435,7 +435,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
             }
 
             mAdapter.notifyDataSetChanged();
-            ((BluePageMainActivity) mContext).updateSelectedNumber();
         }
     }
 
@@ -444,7 +443,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
             mSelectedDataSet.clear();
 
             mAdapter.notifyDataSetChanged();
-            ((BluePageMainActivity) mContext).updateSelectedNumber();
         }
     }
 
@@ -678,10 +676,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
                                 } else {
                                     mSelectedDataSet.remove(id);
                                 }
-
-                                setSelectedAll(false);
-                                ((BluePageMainActivity) mContext).setCheckAllSelected(false);
-                                ((BluePageMainActivity) mContext).updateSelectedNumber();
                             }
                         } else {
                             handleItemClick(v, position);

@@ -2,14 +2,41 @@
 
     <!--
         Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
+            backward-compatibility can go here.
         -->
+    </style>
+
+    <style name="phone_key_type_large">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">7</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/keypad_font_size</item>
+        <item name="android:textColor">@color/keypad_font_color</item>
+    </style>
+
+    <style name="phone_key_type_small">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">4</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/keypad_font_size_small</item>
+        <item name="android:textColor">@color/keypad_font_color_small</item>
+    </style>
+
+    <style name="phone_key_type_normal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">14dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/keypad_font_size_normal</item>
+        <item name="android:textColor">@color/keypad_font_color</item>
     </style>
 
     <!-- Application theme. -->

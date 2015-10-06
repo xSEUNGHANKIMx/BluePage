@@ -10,6 +10,20 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.example.bluepage.BluePageConfig;
+import com.example.bluepage.BluePageConstants;
+import com.example.bluepage.R;
+import com.example.bluepage.dbmanager.BluePageCallLogDao;
+import com.example.bluepage.model.BluePageCallLogModel;
+import com.example.bluepage.utils.BaseListSort;
+import com.example.bluepage.utils.CNormalDialog;
+import com.example.bluepage.utils.CustomTextView;
+import com.example.bluepage.utils.DisplayUtils;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,34 +52,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bluepage.BluePageConfig;
-import com.example.bluepage.BluePageConstants;
-import com.example.bluepage.R;
-import com.example.bluepage.dbmanager.BluePageCallLogDao;
-import com.example.bluepage.model.BluePageCallLogModel;
-import com.example.bluepage.model.BluePageContactsModel;
-import com.example.bluepage.utils.BaseListSort;
-import com.example.bluepage.utils.CNormalDialog;
-import com.example.bluepage.utils.CustomTextView;
-import com.example.bluepage.utils.DisplayUtils;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-
-public class BluePageTabCallLogFragment extends Fragment implements LoaderCallbacks<List<BluePageContactsModel>>,
+public class BluePageTabCallLogFragment extends Fragment implements LoaderCallbacks<List<BluePageCallLogModel>>,
 AdapterView.OnItemClickListener {
 
     static final int OPTION_MENU_WIDTH = 100; // dp
 
+    private static BluePageTabCallLogFragment sInstance;
     private CallLogAdapter mAdapter;
     private BluePageCallLogDao mBluePageCallLogDao;
     private ArrayList<BluePageCallLogListObject> mObjectList = new ArrayList<BluePageCallLogListObject>();
-    private ArrayList<BluePageContactsModel> mBluePageContactsModelList = new ArrayList<BluePageContactsModel>();
+    private ArrayList<BluePageCallLogModel> mBluePageCallLogList = new ArrayList<BluePageCallLogModel>();
     private HashSet<Integer> mSelectedCallLog = new HashSet<Integer>();
     private ListView mListView;
     private CustomTextView mEmptyView;
-    protected Loader<List<BluePageContactsModel>> mLoader;
+    protected Loader<List<BluePageCallLogModel>> mLoader;
     private ContentObserver mPttCallLogObserver, mOemCallLogObserver;
     private Context mContext;
     private Long mLastUpdated;
@@ -81,6 +81,17 @@ AdapterView.OnItemClickListener {
     private CustomTextView mTitleView;
     private boolean mVisibleLabel = true;
     private CNormalDialog mDialog;
+
+    public static synchronized BluePageTabCallLogFragment getInstance() {
+        if (sInstance == null) {
+            sInstance = new BluePageTabCallLogFragment();
+        }
+        return sInstance;
+    }
+
+    public static synchronized void removeInstance() {
+        sInstance = null;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -285,7 +296,7 @@ AdapterView.OnItemClickListener {
 
     private void setCheckAllCallLogList() {
         if (mIsSelectableMode) {
-            for (BluePageContactsModel model : mBluePageContactsModelList) {
+            for (BluePageCallLogModel model : mBluePageCallLogList) {
                 mSelectedCallLog.add(model.getId());
             }
 
@@ -373,7 +384,7 @@ AdapterView.OnItemClickListener {
         }
     }
 
-    private void showRetryDialog(final BluePageContactsModel callLogModel) {
+    private void showRetryDialog(final BluePageCallLogModel callLogModel) {
         String body;
 
         if (mIsSelectableMode) {
@@ -393,7 +404,7 @@ AdapterView.OnItemClickListener {
         mDialog.show();
     }
 
-    private void doRetryFailedOutgoingCall(BluePageContactsModel callLogModel) {
+    private void doRetryFailedOutgoingCall(BluePageCallLogModel callLogModel) {
         /*        Intent intent = new Intent(mContext, callMainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.setAction(BluePageConstants.INTENT_ACTION_MAKE_CALL);
@@ -462,26 +473,26 @@ AdapterView.OnItemClickListener {
     }
 
     @Override
-    public Loader<List<BluePageContactsModel>> onCreateLoader(int arg0, Bundle arg1) {
+    public Loader<List<BluePageCallLogModel>> onCreateLoader(int arg0, Bundle arg1) {
         mLoader = mBluePageCallLogDao.getLoader();
         return mLoader;
     }
 
     @Override
-    public void onLoadFinished(Loader<List<BluePageContactsModel>> loader, List<BluePageContactsModel> data) {
-        mBluePageContactsModelList.clear();
+    public void onLoadFinished(Loader<List<BluePageCallLogModel>> loader, List<BluePageCallLogModel> data) {
+        mBluePageCallLogList.clear();
         mObjectList.clear();
 
         if (data.size() > 0) {
 
             // Sorting Data List by options.
             // data = sortData(data);
-            mBluePageContactsModelList.addAll(data);
+            mBluePageCallLogList.addAll(data);
             setListLabels(data);
         }
 
         if (!mIsSelectableMode) {
-            if (mBluePageContactsModelList.isEmpty()) {
+            if (mBluePageCallLogList.isEmpty()) {
                 mRightBtn3.setVisibility(View.GONE);
             } else {
                 mRightBtn3.setVisibility(View.VISIBLE);
@@ -491,11 +502,11 @@ AdapterView.OnItemClickListener {
         mAdapter.notifyDataSetChanged();
     }
 
-    private void setListLabels(List<BluePageContactsModel> models) {
+    private void setListLabels(List<BluePageCallLogModel> models) {
         String currlabel = null;
 
         mObjectList.clear();
-        for (BluePageContactsModel callLogModel : models) {
+        for (BluePageCallLogModel callLogModel : models) {
             if (!callLogModel.getListLabel().equalsIgnoreCase(currlabel)) {
                 currlabel = callLogModel.getListLabel();
                 if (mVisibleLabel) {
@@ -516,8 +527,8 @@ AdapterView.OnItemClickListener {
     }
 
     @Override
-    public void onLoaderReset(Loader<List<BluePageContactsModel>> arg0) {
-        mBluePageContactsModelList.clear();
+    public void onLoaderReset(Loader<List<BluePageCallLogModel>> arg0) {
+        mBluePageCallLogList.clear();
     }
 
     @Override
@@ -550,6 +561,10 @@ AdapterView.OnItemClickListener {
             }
         }
         return outNumbers.toString();
+    }
+
+    protected void scrollUpToHeader() {
+        mListView.setSelectionAfterHeaderView();
     }
 
     void onOption() {

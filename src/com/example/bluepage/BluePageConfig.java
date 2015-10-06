@@ -23,7 +23,6 @@ public class BluePageConfig {
     public static final int TYPE_MMS_SENDING = 819;
     public static final int TYPE_MMS_RECEIVING = 820;
 
-    public static final String DATA_BASE_NAME = "db_sptt_calllog";
     public static final String PREF_KEY_CALLLOG_UPDATE_TIMESTAMP = "calllog_update_timestamp";
 
     /* 발신을 하면 제일 먼저 Session ID를 얻어오게 되고,

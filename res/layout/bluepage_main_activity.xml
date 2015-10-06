@@ -17,7 +17,7 @@
 
             <include layout="@layout/bluepage_contacts_actionbar" />
 
-            <com.example.bluepage.activities.BluePageTabWidget
+            <com.example.bluepage.views.BluePageTabWidget
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/contacts_tab_height"

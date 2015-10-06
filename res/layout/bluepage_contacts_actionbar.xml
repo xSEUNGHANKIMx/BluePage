@@ -23,7 +23,7 @@
             android:scaleType="centerInside"
             android:src="@drawable/btn_actionbar_menu" />
 
-        <com.example.bluepagew.utils.CustomTextView
+        <com.example.bluepage.utils.CustomTextView
             xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
             android:id="@id/contacts_actionbar_default_title"
             android:layout_width="0dp"
