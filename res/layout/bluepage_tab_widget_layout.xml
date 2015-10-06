@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/actionbar_common_background"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@id/contacts_tab_widget_button"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/im_ripple"
+        android:gravity="center"
+        android:textColor="@color/contacts_tab_unselected_text_color"
+        android:textSize="14dp" >
+    </Button>
+
+    <View
+        android:id="@id/contacts_tab_widget_indicator"
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_height="3dp"
+        android:layout_marginBottom="1dp" >
+    </View>
+
+</LinearLayout>

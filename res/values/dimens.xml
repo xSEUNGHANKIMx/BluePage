@@ -1,0 +1,63 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="menu_width">306dp</dimen>
+    <dimen name="keypad_nor_height">66dp</dimen>
+    <dimen name="keypad_opt_height">75dp</dimen>
+    <dimen name="keypad_font_size">24dp</dimen>
+    <dimen name="keypad_font_size_small">10dp</dimen>
+    <dimen name="keypad_font_size_normal">12sp</dimen>
+    <dimen name="call_text_area_font_size">27dp</dimen>
+
+    <!-- Actionbar common layout -->
+    <dimen name="actionbar_common_default_height">57dp</dimen>
+    <dimen name="actionbar_common_2depth_height">104dp</dimen>
+    <dimen name="actionbar_common_button_default_width">57dp</dimen>
+    <dimen name="actionbar_common_button_default_height">57dp</dimen>
+
+    <!-- call -->
+    <dimen name="call_type_change_height">155dp</dimen>
+    <dimen name="call_option_popup_width">129dp</dimen>
+    <dimen name="call_option_popup_height">268.5dp</dimen>
+    <dimen name="call_option_button_height">55dp</dimen>
+    <dimen name="call_controller_bottom_height">123dp</dimen>
+    <dimen name="call_video_ptt_width">300dp</dimen>
+
+    <!-- Contacts -->
+    <dimen name="contacts_tab_height">47dp</dimen>
+    <dimen name="contacts_search_height">52dp</dimen>
+    <dimen name="contacts_search_edittext_height">36dp</dimen>
+    <dimen name="contacts_list_item_contact_height">88dp</dimen>
+    <dimen name="contacts_list_item_label_height">30dp</dimen>
+
+    <!-- Contacts Group -->
+	<dimen name="contacts_group_list_item_height">88dp</dimen>
+	
+	<!-- Contacts Organization -->
+    <dimen name="contacts_organization_list_item_height">88dp</dimen>
+    
+    <!-- Contacts Detail -->
+    <dimen name="contacts_detail_separator_height">0.67dp</dimen>
+    <dimen name="contacts_detail_list_item_height">74dp</dimen>
+    <dimen name="contacts_detail_side_margin">7dp</dimen>
+
+    <!-- Contacts Edit -->
+    <dimen name="contacts_edit_list_item_height">74dp</dimen>
+    <dimen name="contacts_edit_separator_height">0.67dp</dimen>
+    
+    <!-- Call Log -->
+    <dimen name="calllog_list_item_height">88dp</dimen>
+    <dimen name="calllog_list_separator_height">0.67dp</dimen>
+    
+    <!-- Gallery -->
+    <dimen name="gallery_gridview_spacing">2dp</dimen>
+    <dimen name="image_thumbnail_size">100dp</dimen>
+    <dimen name="image_thumbnail_spacing">1dp</dimen>
+    <dimen name="horizontal_page_margin">16dp</dimen>
+    
+	<!-- Toast -->
+	<dimen name="toast_bottom_dp">133dp</dimen>
+
+</resources>

@@ -1,0 +1,420 @@
+<resources>
+
+    <!-- Common -->
+    <string name="app_name">sptt</string>
+    <string name="btn_ok">확인</string>
+    <string name="btn_cancel">취소</string>
+    <string name="btn_done">완료</string>
+    <string name="btn_finish">종료</string>
+    <string name="btn_open">열기</string>
+    <string name="btn_close">닫기</string>
+    <string name="btn_search">검색</string>
+    <string name="btn_send">전송</string>
+    <string name="btn_menu">메뉴</string>
+    <string name="voice_ptt">음성PTT</string>
+    <string name="video_ptt">영상PTT</string>
+    <string name="voice_call">음성통화</string>
+    <string name="video_call">영상통화</string>
+    <string name="title_phone">통화</string>
+    <string name="title_recent_call_history">최근 기록</string>
+    <string name="title_all">전체</string>
+    <string name="option_label_delete">삭제</string>
+    <string name="option_label_voice_ptt">음성PTT 연결</string>
+    <string name="option_label_video_ptt">영상PTT 연결</string>
+    <string name="option_label_voice_call">음성통화 연결</string>
+    <string name="option_label_video_call">영상통화 연결</string>
+    <string name="option_label_message">메세지</string>
+    <string name="option_label_send_contact">연락처 전송</string>
+    <string name="option_label_selectable">선택</string>
+    <string name="option_label_add_member">대원추가</string>
+    <string name="option_label_add_new_member">새 대원추가</string>
+    <string name="Connected_session">연결된 세션</string>
+    <string name="Emergency_call">긴급 통화</string>
+    <string name="name_of_myself">(나)</string>
+
+    <!-- 퍼미션 -->
+    <string name="permission_protect_label">문자를 직접 보냅니다</string>
+    <string name="permission_protect_desc">당신의 동의없이 문자를 보냅니다.
+	    악성프로그램이나 문자요금은 발생시키지 않습니다.
+	    비상시 문자를 호출하는 응용프로그램 입니다</string>
+
+    <!-- Contacts Group -->
+    <string name="contacts_group_empty_view_label">그룹 정보가 없습니다.</string>
+
+    <!-- Contacts Organization -->
+    <string name="contacts_organization_empty_view_label">조직도 정보가 없습니다.</string>
+
+    <!-- Contacts -->
+    <string name="contacts_default_title">연락처</string>
+    <string name="contacts_selectable_title_none">0개 선택</string>
+    <string name="contacts_selectable_title_group_only">그룹 %1$d개 선택</string>
+    <string name="contacts_selectable_title_member_only">대원 %1$d명 선택</string>
+    <string name="contacts_tab_ptt_group">PTT그룹</string>
+    <string name="contacts_tab_organization">조직도</string>
+    <string name="contacts_tab_contacts">연락처</string>
+    <string name="contacts_empty_view_label">연락처가 없습니다.</string>
+    <string name="contacts_edit_title">주소록 편집</string>
+    <string name="contacts_edit_search_hint">검색</string>
+    <string name="contacts_initial_data_loading_message">초기데이터 동기화&#8230;</string>
+    <string name="contacts_group_member_company_name">소속</string>
+    <string name="contacts_group_member_no_company_name">소속없음</string>
+    <string name="contacts_group_member_company_department">부서</string>
+    <string name="contacts_group_member_no_company_department">부서없음</string>
+    <string name="contacts_group_member_company_title">직위</string>
+    <string name="contacts_group_member_no_company_title">직위없음</string>
+    <string name="contacts_group_member_no_ptt_number">PTT번호없음</string>
+    <string name="contacts_group_member_no_caller_id">발신자번호없음</string>
+    <string name="loading_message_completed">데이터 동기화 완료!</string>
+    <string name="loading_message_failure">데이터 동기화 실패!</string>
+    <string name="contacts_delete_success">삭제되었습니다.</string>
+    <string name="contacts_delete_failed">삭제를 실패했습니다.</string>
+    <string name="contacts_delete_success_pre_arranged_group">그룹 삭제 완료!</string>
+    <string name="contacts_delete_unavailable_pre_arranged_group">기본그룹은 삭제할 수 없습니다.</string>
+    <string name="contacts_delete_success_pre_arranged_member">대원 삭제 완료!</string>
+    <string name="contacts_delete_unavailable_pre_arranged_member">기본그룹의 대원은 삭제할 수 없습니다.</string>
+    <string name="contacts_loading_myprofile_failed">개인정보를 얻어오는데 실패 했습니다.</string>
+    <string name="contacts_message_no_selection">그룹 혹은 대원을 선택하세요.</string>
+    <string name="contacts_member_number_type_ptt">PTT</string>
+    <string name="contacts_member_number_type_volte">VoLTE</string>
+    <string name="contacts_actionbar_btn_done">완료</string>
+    <string name="contacts_exceed_max_recipient_message">발신제한 인원을 초과했습니다.</string>
+
+    <!-- Contacts Detail -->
+    <string name="contacts_detail_no_id">Contact ID를 가져올 수 없습니다.</string>
+    <string name="contacts_detail_header_btn_audioptt">음성PTT</string>
+    <string name="contacts_detail_header_btn_videoptt">영상PTT</string>
+    <string name="contacts_detail_header_btn_audiocall">음성통화</string>
+    <string name="contacts_detail_header_btn_videocall">영상통화</string>
+    <string name="contacts_detail_header_btn_message">메세지</string>
+    <string name="contacts_detail_listitem_title_phone_mobile1">휴대폰 번호1</string>
+    <string name="contacts_detail_listitem_title_phone_mobile2">휴대폰 번호2</string>
+    <string name="contacts_detail_listitem_title_phone_mobile3">휴대폰 번호3</string>
+    <string name="contacts_detail_listitem_title_phone_home1">집전화 번호1</string>
+    <string name="contacts_detail_listitem_title_phone_home2">집전화 번호2</string>
+    <string name="contacts_detail_listitem_title_phoen_work1">직장 번호1</string>
+    <string name="contacts_detail_listitem_title_phoen_work2">직장 번호2</string>
+    <string name="contacts_detail_listitem_title_fax_home">집팩스 번호</string>
+    <string name="contacts_detail_listitem_title_fax_work">직장팩스 번호</string>
+    <string name="contacts_detail_listitem_title_pager">호출기 번호</string>
+    <string name="contacts_detail_listitem_title_other_phone1">기타 번호1</string>
+    <string name="contacts_detail_listitem_title_other_phone2">기타 번호2</string>
+    <string name="contacts_detail_listitem_title_home_email">개인 이메일</string>
+    <string name="contacts_detail_listitem_title_work_email">직장 이메일</string>
+    <string name="contacts_detail_listitem_title_other_email">기타 이메일</string>
+    <string name="contacts_detail_listitem_title_home_address">집 주소</string>
+    <string name="contacts_detail_listitem_title_work_address">직장 주소</string>
+    <string name="contacts_detail_listitem_title_other_address">기타 주소</string>
+    <string name="contacts_detail_listitem_title_company_name">직장명</string>
+    <string name="contacts_detail_listitem_title_company_title">직위</string>
+    <string name="contacts_detail_listitem_title_company_department">부서</string>
+    <string name="contacts_detail_listitem_title_birthday_event">생일</string>
+    <string name="contacts_detail_listitem_title_anniversary_event">기념일</string>
+    <string name="contacts_detail_listitem_title_other_event">기타 기념일</string>
+    <string name="contacts_detail_listitem_title_website">웹사이트</string>
+    <string name="contacts_detail_listitem_title_messenger">메신저</string>
+    <string name="contacts_detail_listitem_title_note">메모</string>
+    <string name="contacts_detail_listitem_title_relation">관계</string>
+    <string name="contacts_detail_listitem_title_ptt">PTT 번호</string>
+    <string name="contacts_detail_listitem_title_affiliation">소속 / 부서 / 직급</string>
+    <string name="contacts_detail_toast_cannot_find_contact">연락처 정보를 찾을 수 없습니다.</string>
+    <string name="contacts_detail_noname">이름 없음</string>
+    <string name="contacts_detail_no_pttnumber">PTT번호 없음</string>
+
+    <!-- Contacts Edit -->
+    <string name="contacts_edit_top_button_cancel">취소</string>
+    <string name="contacts_edit_top_button_save">저장</string>
+    <string name="contacts_edit_name_hint">이름</string>
+    <string name="contacts_edit_familyname_hint">성</string>
+    <string name="contacts_edit_middlename_hint">중간이름</string>
+    <string name="contacts_edit_givenname_hint">이름</string>
+    <string name="contacts_edit_ptt_number">PTT 번호</string>
+    <string name="contacts_edit_phone_number">전화번호</string>
+    <string name="contacts_edit_phone_type_unselected">선택</string>
+    <string name="contacts_edit_phone_type_mobile1">휴대폰1</string>
+    <string name="contacts_edit_phone_type_mobile2">휴대폰2</string>
+    <string name="contacts_edit_phone_type_mobile3">휴대폰3</string>
+    <string name="contacts_edit_phone_type_home1">집전화1</string>
+    <string name="contacts_edit_phone_type_home2">집전화2</string>
+    <string name="contacts_edit_phone_type_work1">직장전화1</string>
+    <string name="contacts_edit_phone_type_work2">직장전화2</string>
+    <string name="contacts_edit_phone_type_fax_home">집팩스</string>
+    <string name="contacts_edit_phone_type_fax_work">직장팩스</string>
+    <string name="contacts_edit_phone_type_pager">호출기</string>
+    <string name="contacts_edit_phone_type_other1">기타1</string>
+    <string name="contacts_edit_phone_type_other2">기타2</string>
+    <string name="contacts_edit_add_number">전화번호 추가</string>
+    <string name="contacts_edit_affiliation_title">소속 / 부서 / 직급</string>
+    <string name="contacts_edit_reached_max_toast">더이상 추가할 수 없습니다.</string>
+    <string name="contacts_edit_select_other_type">이미 사용중입니다.</string>
+    <string name="contacts_edit_enter_ptt_number">PTT번호는 필수항목 입니다.</string>
+    <string name="contacts_edit_my_own_ptt_number">입력한 번호는 내 PTT번호 입니다.</string>
+    <string name="contacts_edit_exist_ptt_number">이미 저장된 대원입니다.</string>
+
+    <!-- Contacts Selectable Groups -->
+    <string name="contacts_selectable_groups_title">그룹 선택</string>
+
+    <!-- Contacts Selectable Organizations -->
+    <string name="contacts_selectable_organizations_title">조직도 선택</string>
+
+    <!-- Contacts Selectable Members -->
+    <string name="contacts_selectable_members_title">연락처 선택</string>
+
+    <!-- Call Log -->
+    <string name="calllog_title">최근기록</string>
+    <string name="calllog_selectable_title_none">0개 선택</string>
+    <string name="calllog_spinner_latest">최신순</string>
+    <string name="calllog_spinner_group">그룹별</string>
+    <string name="calllog_spinner_abc">가나다순</string>
+    <string name="calllog_empty_view_label">통화기록이 없습니다.</string>
+    <string name="calllog_update_progress_message">통화기록 동기화&#8230;</string>
+    <string name="calllog_type_label_voice_ptt">음성PTT</string>
+    <string name="calllog_type_label_video_ptt">영상PTT</string>
+    <string name="calllog_type_label_voice_call">음성통화</string>
+    <string name="calllog_type_label_video_call">영상통화</string>
+    <string name="calllog_type_label_message">메시지</string>
+    <string name="calllog_type_label_photo">사진</string>
+    <string name="calllog_type_label_video">동영상</string>
+    <string name="calllog_type_label_record">녹음파일</string>
+    <string name="calllog_type_label_no_format">알수없는 포맷</string>
+    <string name="calllog_type_label_oem_voice_call">일반음성전화</string>
+    <string name="calllog_type_label_oem_video_call">일반영상전화</string>
+    <string name="calllog_type_label_other">미지정타입</string>
+    <string name="calllog_no_saved_number">저장되지 않은 번호</string>
+    <string name="calllog_granted_audio">음성을 전송중 입니다.</string>
+    <string name="calllog_granted_complete_audio">음성을 전송했습니다.</string>
+    <string name="calllog_taken_audio">음성을 수신중 입니다.</string>
+    <string name="calllog_taken_complete_audio">음성을 수신했습니다.</string>
+    <string name="calllog_granted_video">영상을 전송중 입니다.</string>
+    <string name="calllog_granted_complete_video">영상을 전송했습니다.</string>
+    <string name="calllog_taken_video">영상을 수신중 입니다.</string>
+    <string name="calllog_taken_complete_video">영상을 수신했습니다.</string>
+    <string name="calllog_selectable_title">%1$d개 선택</string>
+    <string name="calllog_delete_success">삭제되었습니다.</string>
+    <string name="calllog_delete_failed">삭제를 실패했습니다.</string>
+    <string name="calllog_no_number_data">번호정보 없음</string>
+    <string name="calllog_list_section_label_today">오늘</string>
+    <string name="calllog_list_delete_no_selection_message">선택된 항목이 없습니다.</string>
+    <string name="calllog_delete_popup_message">%1$s개 항목을 삭제합니다.</string>
+    <string name="calllog_delete_toast_message">삭제 되었습니다.</string>
+    <string name="calllog_delete_all_popup_message">전체 항목을 삭제합니다.</string>
+    <string name="calllog_delete_all_toast_message">전체 항목이 삭제되었습니다.</string>
+    <string name="calllog_delete_delete_no_items_toast_message">최근기록이 없습니다.</string>
+    <string name="calllog_retry_failed_outgoing_call_title">발신실패 기록</string>
+    <string name="calllog_retry_failed_outgoing_call_message">발신에 실패했던 통화기록입니다.\n이 번호로 재발신 하시겠습니까?</string>
+    <string name="calllog_retry_failed_outgoing_call_button">재발신</string>
+
+    <!-- Call Log Detail -->
+    <string name="calllog_detail_me_label">나</string>
+    <string name="calllog_detail_no_name_data">이름정보 없음</string>
+    <string name="calllog_detail_no_number_data">번호정보 없음</string>
+    <string name="calllog_detail_no_server_session_id">서버세션정보 없음</string>
+    <string name="calllog_detail_delete_no_items_toast_message">상세항목이 없습니다.</string>
+    <string name="calllog_detail_empty_view_prearranged_label">통화 상세기록이 없습니다.</string>
+    <string name="calllog_detail_empty_view_adhoc_label">Ad-Hoc 통화의 경우,\n상세 통화기록을 제공하지 않습니다.</string>
+
+    <!-- menuDrawer lib -->
+    <string name="md__drawerOpenIndicatorDesc">Close drawer</string>
+    <string name="md__drawerClosedIndicatorDesc">Open drawer</string>
+
+    <!-- 미디어보관함 -->
+    <string name="title_media">미디어 보관함</string>
+    <string name="media_select_count">%1$s개 선택</string>
+    <string name="media_search_today">오늘</string>
+    <string name="media_search_2_weeks_ago">2주전</string>
+    <string name="media_search_1_month_ago">한달 전</string>
+    <string name="media_search_long_ago">오래된 항목</string>
+
+    <!-- 설정 -->
+    <string name="action_settings">설정</string>
+    <string name="personal">개인</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_question">로그아웃 하시겠습니까?</string>
+    <string name="position">위치 정보 공유</string>
+    <string name="position_setting">위치 정보 설정</string>
+    <string name="position_setting_question">위치 정보 공유 설정을\n하시겠습니까?</string>
+    <string name="position_setting_change">위치 공유 기능이 설정되었습니다.</string>
+    <string name="position_setting_change_cancel">위치 공유 기능 설정이 취소되었습니다.</string>
+    <string name="switch_on">켜짐</string>
+    <string name="switch_off">꺼짐</string>
+    <string name="call_setting">통화설정</string>
+    <string name="auto_tell_receive">자동 통화 수신</string>
+    <string name="call_setting_change">자동 수신기능이 설정되었습니다.</string>
+    <string name="call_setting_change_cancel">자동 수신기능 설정이 취소되었습니다.</string>
+    <string name="auto_receive">자동 수신</string>
+    <string name="manual">수동 수신</string>
+    <string name="voice_request">발언권 요청</string>
+    <string name="voice_request_change">발언권 요청 설정이 변경 되었습니다.</string>
+    <string name="press">누른 채로 말하기</string>
+    <string name="press_speak">짧게 누르고 말하기</string>
+    <string name="screen">통화화면 정보 정렬</string>
+    <string name="screen_new">새 항목 위에서부터 보임</string>
+    <string name="screen_old">오래된 항목 위에서부터 보임</string>
+    <string name="screen_new_change">통화화면 정보를 새 항목 위에서부터 보임으로 정렬합니다. </string>
+    <string name="screen_old_change">통화화면 정보를 오래된 항목 위에서부터 보임으로 정렬합니다. </string>
+    <string name="notice">알림</string>
+    <string name="notice_melody">메시지 알림음</string>
+    <string name="notice_melody_change">으로 설정되었습니다.</string>
+    <string name="new_message">새 메시지 알림</string>
+    <string name="new_message_change">새 메시지 알림 설정이 되었습니다.</string>
+    <string name="new_message_change_cancel">새 메시지 알림 설정이 취소되었습니다.</string>
+    <string name="shake">진동 설정</string>
+    <string name="shake_change">진동 모드가 설정 되었습니다.</string>
+    <string name="shake_change_cancel">진동 모드가 취소되었습니다.</string>
+    <string name="version">버전 정보</string>
+    <string name="media_version">미디어 버전</string>
+    <string name="sip_Stack_version">sip stack 버전</string>
+    <string name="setting_server">서버 설정</string>
+    <string name="update">업데이트</string>
+    <string name="btn_gps_ok">확인</string>
+    <string name="btn_gps_cancel">취소</string>
+    <string name="btn_log_out_ok">확인</string>
+    <string name="btn_change_ok">확인</string>
+
+    <!-- 로그인 -->
+    <string name="name">계정</string>
+    <string name="pass">비밀번호</string>
+    <string name="autologin">자동로그인</string>
+    <string name="loginbtn">로그인</string>
+    <string name="login_fail_title">로그인 실패</string>
+    <string name="login_fail">아이디 또는 비밀번호를 잘못 입력하셨습니다.\n 다시 확인하신 후 입력하세요.</string>
+    <string name="login_input_retry">다시 입력 해 주세요.</string>
+
+    <!-- 히든 페이지 -->
+    <string name="hidden_title">히든 메뉴</string>
+    <string name="frame_setting">프레임 설정(10 ~ 30 fps)</string>
+    <string name="speak_time_setting">발언권 유지 시간(초 단위 입력)</string>
+    <string name="log_setting">로그 설정</string>
+    <string name="log_save_on">로그 저장 켜짐</string>
+    <string name="log_save_off">로그 저장 꺼짐</string>
+    <string name="audio_codec">오디오 코덱</string>
+    <string name="audio_codec_setting">오디오 코덱 설정</string>
+    <string name="video_codec">비디오 코덱</string>
+    <string name="video_codec_setting">비디오 코덱 설정</string>
+    <string name="btn_change">변경</string>
+    <string name="session_time">세션 타임 변경(second)</string>
+    <string name="re_registration">Re Registration 변경(second)</string>
+    <string name="resolution">해상도 설정</string>
+    <string name="resolution_change">해상도가 변경되었습니다</string>
+    <string name="srtp_setting">SRTP 설정</string>
+    <string name="srtp_on">SRTP 켜짐</string>
+    <string name="srtp_off">SRTP 꺼짐</string>
+    <string name="transport">Transport 설정</string>
+    <string name="transport_change">Transport가 변경되었습니다</string>
+
+    <!-- 에러 페이지 -->
+    <string name="errortext">해당 페이지의 접속이 지연되고 있습니다.\n네트워크 연결 상태를 확인하거나\n잠시 후 다시 이용해 주세요.</string>
+    <string name="trybtn">재시도</string>
+
+    <!-- ImageWorker -->
+    <string name="data_connection_check">데이터 네트워크 및 Wi-Fi 연결을 확인하세요.</string>
+
+    <!-- PTT Call -->
+    <string name="option_order">긴급발언</string>
+    <string name="option_member_add">대원추가</string>
+    <string name="option_mute_on">음소거 끔</string>
+    <string name="option_mute_off">음소거 켬</string>
+    <string name="option_speaker_on">스피커 끔</string>
+    <string name="option_speaker_off">스피커 켬</string>
+    <string name="option_mike_on">마이크 끔</string>
+    <string name="option_mike_off">마이크 켬</string>
+    <string name="option_call_end">종료</string>
+
+    <!-- Crash report -->
+    <string name="crash_toast_text">어플리케이션이 응답하지 않습니다. 이 문제점을 해결하기 위해 해당 담당자에게 리포트 하겠습니다!</string>
+    <string name="crash_dialog_title">어플리케이션 정지됨</string>
+    <string name="crash_dialog_text">예기치 못한 오류가 발생하여 어플리케이션이 정지 되었습니다. 해당 오류를 수정하기 위해 \'확인\' 버튼을 눌러 담당자에게 오류정보를 보내주십시오.</string>
+    <string name="crash_dialog_comment_prompt">발생된 문제의 추가정보를 아래에 기입해주세요:</string>
+    <string name="crash_dialog_ok_toast">감사합니다!</string>
+    <string name="pref_enable_acra">오류 보고</string>
+    <string name="alert_dlg_title_delete">삭제</string>
+    <string name="alert_dlg_msg_delte">항목 %1$s개를 삭제합니다.</string>
+    <string name="alert_dlg_title_rename">이름 변경</string>
+
+    <!-- Media Box -->
+    <string name="toast_comfim_save_media">촬영하신 사진이나 동영상은 단말 갤러리에서만 확인 가능합니다.</string>
+    <string name="media_detail_info">상세정보</string>
+    <string name="media_detail_info_date">날짜</string>
+    <string name="media_detail_info_location">위치</string>
+    <string name="media_detail_info_no_location">위치 정보 없음</string>
+    <string name="media_detail_info_no">정보 없음</string>
+    <string name="media_detail_info_attr">속성</string>
+    <string name="media_detail_info_title">제목 : </string>
+    <string name="media_detail_info_size">크기 : </string>
+    <string name="media_detail_info_screen">해상도 : </string>
+    <string name="media_detail_info_rotation">회전 : </string>
+    <string name="media_detail_info_time">재생시간 : </string>
+    <string name="media_detail_info_path">경로 : </string>
+
+    <!-- Dialog -->
+    <string name="dialog_delete_title">삭제</string>
+    <string name="dialog_item_delete_body">항목을 삭제합니다.</string>
+    <string name="dialog_btn_delete">삭제</string>
+    <string name="dialog_btn_cancel">취소</string>
+    <string name="dialog_btn_change">전환</string>
+    <string name="dialog_btn_positive">확인</string>
+    <string name="dialog_btn_connection">연결</string>
+    <string name="dialog_btn_refusal">거절</string>
+    <string name="call_connection_notice">통화 연결 알림</string>
+    <string name="call_connection_fail_notice">통화 연결 불가 알림</string>
+    <string name="call_connection_request">“%1$s” 가 %2$s 통화를 요청하였습니다. </string>
+    <string name="call_connection_request_recording">통화 연결시 ,현재 진행중인 녹음은 중지됩니다. 연결하시겠습니까?</string>
+    <string name="call_close_notice">채널 종료 알림</string>
+    <string name="call_limit_connection">        10개 채널 모두 통화중입니다.\n
+        "%1$s"채널을 종료하고,\n
+        "%2$s"그룹 통화를 연결합니다.</string>
+    <string name="call_limit_connection_fail">        10개 채널 모두 통화중입니다.\n
+        "%1$s" 통화를 연결할 수 없습니다.\n
+        기존 채널 종료 후 통화하세요.</string>
+    <string name="call_pre_anange_group_no_groupid">그룹 호에 그룹ID가 없습니다.</string>
+    <string name="call_fail_dialog_body">현재 "%1$s"는 통화할 수 없는 번호입니다. 다시 확인하시고 통화해 주세요.</string>
+    <string name="call_change">통화 전환</string>
+    <string name="call_change_body">%1$s 통화를 %2$s 통화로 통화 전환을 시도 합니다.</string>
+    <string name="call_change_body2">통화 전환을 시도 합니다.</string>
+    <string name="call_voice_ptt">음성 PTT</string>
+    <string name="call_video_ptt">영상 PTT</string>
+    <string name="call_voice">음성 통화</string>
+    <string name="call_video">영상 통화</string>
+    <string name="call_exit">나가기</string>
+    <string name="call_exit_body">“%1$s” 통화에서 나갑니다.</string>
+    <string name="call_recording_cancel">녹음 중지</string>
+    <string name="call_recording_cancel_body">        통화전환 시 녹음이 중지됩니다.\n
+        통화를 전환 합니다.</string>
+    <string name="call_end_recording_cancel_body">        통화종료 시 녹음이 중지됩니다.\n
+  통화를 종료 합니다.</string>
+    <string name="call_dialer_recording_cancel_body">        통화 시 녹음이 중지됩니다.\n
+  통화를 시도 합니다.</string>
+    <string name="call_add_member_on_session_error">열려있는 주세션이 없습니다.</string>
+
+    <!-- Toast -->
+    <!-- <string name="toast_exit">%1$s 통화에서 <font color=\"#23A7E4\">나가기</font> 하였습니다.</string> -->
+    <string name="toast_exit">	    %1$s 통화를 
+
+
+
+
+
+
+
+<![CDATA[
+		<font color=\"#23A7E4\">종료</font>
+		]]>
+		하였습니다.
+</string>
+    <string name="call_session_list_before_message_second">약 %1$s초 전 %2$s 발언</string>
+    <string name="call_session_list_before_message_min">약 %1$s분 전 %2$s 발언</string>
+    <string name="call_session_list_before_message_hour">약 %1$s시간 전 %2$s 발언</string>
+    <string name="call_session_list_before_message_day">약 %1$s일 전 %2$s 발언</string>
+    <string name="call_session_list_before_message_no">연결중 </string>
+    <string name="call_main_start_recording">녹음을 시작하였습니다.</string>
+    <string name="call_main_stop_recording">녹음을 중지하였습니다. 녹음된 파일은 보관함에 저장됩니다.</string>
+    <string name="call_main_recording_fail">녹음에 실패하였습니다.</string>
+    <string name="call_main_none_recording">녹음 할 전화가 없습니다.</string>
+    <string name="call_main_not_service">PTT 서비스와 연결이 원활하지 않습니다.</string>
+    <string name="dialer_wrong_number">잘못 입력 하셨습니다. PTT 번호를 입력하세요.</string>
+    <string name="dialer_empty_number">전화번호를 입력하세요.</string>
+    <string name="call_background_incoming">"%1$s"로 부터 통화 수신 하였습니다.</string>
+    <string name="call_progress_title">통화 연결중</string>
+    <string name="call_progress_dialog_body">"%1$s"에 연결중 입니다.</string>
+    <string name="call_max_title">통화 연결 알림</string>
+
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <bitmap android:gravity="center_vertical" android:src="@drawable/btn_radio_bg_on" />
+            </item>
+            <item>
+                <bitmap android:gravity="center_vertical|right" android:src="@drawable/btn_radio_toggle_on" />
+            </item>
+        </layer-list>
+    </item>
+        
+    <item android:state_checked="false">
+        <layer-list>
+            <item>
+                <bitmap android:src="@drawable/btn_radio_bg_off" android:gravity="center_vertical" />
+            </item>
+            <item>
+                <bitmap android:gravity="center_vertical|left" android:src="@drawable/btn_radio_toggle_off" />
+            </item>
+        </layer-list>
+    </item>
+</selector>

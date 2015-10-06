@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/actionbar_common_button_default_width"
+    android:background="@color/color9"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@id/calllog_actionbar_default_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingRight="0dp"
+        android:paddingLeft="20dp"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@id/calllog_actionbar_default_left_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/im_ripple"
+            android:scaleType="centerInside"
+            android:src="@drawable/btn_actionbar_menu" />
+
+        <com.example.bluepage.utils.CustomTextView
+            xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
+            android:id="@id/calllog_actionbar_default_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="18dp" />
+
+        <ImageView
+            android:id="@id/calllog_actionbar_default_right_button_01"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/calllog_actionbar_default_right_button_02"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/calllog_actionbar_default_right_button_03"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="7dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/calllog_actionbar_selectable_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingRight="0dp"
+        android:paddingLeft="20dp"
+        android:visibility="gone" >
+
+        <ImageView
+            android:id="@id/calllog_actionbar_selectable_left_button"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/im_ripple"
+            android:scaleType="centerInside" />
+
+        <com.example.bluepage.utils.CustomTextView
+            xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
+            android:id="@id/calllog_actionbar_selectable_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="18dp"/>
+
+        <ImageView
+            android:id="@id/calllog_actionbar_selectable_right_button_01"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/calllog_actionbar_selectable_right_button_02"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@id/calllog_actionbar_selectable_right_button_03"
+            android:layout_width="42dp"
+            android:layout_height="57dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/im_ripple"
+            android:paddingBottom="17dp"
+            android:paddingLeft="9dp"
+            android:paddingRight="9dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerInside"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@id/calllog_actionbar_selectable_right_txt_button_04"
+            android:layout_width="70dp"
+            android:layout_height="40dp"
+            android:background="@drawable/im_ripple"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.tisquare.ptt.CallLogActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/actionbar_common_background"
+        android:orientation="vertical" >
+
+        <include layout="@layout/calllog_actionbar" />
+
+        <LinearLayout
+            android:id="@id/calllog_spinner_layout"
+            android:layout_width="110dp"
+            android:layout_height="47dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/im_ripple"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingRight="7dp"
+            android:paddingLeft="20dp" >
+
+            <com.example.bluepage.utils.CustomTextView
+                xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
+                android:id="@id/calllog_spinner_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="text"
+                android:textColor="@color/white"
+                android:textSize="14dp" />
+
+            <ImageView
+                android:id="@id/calllog_spinner_arrow"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/btn_actionbar_dropbox_arrow" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical" >
+
+        <com.example.bluepage.utils.CustomTextView
+            xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
+            android:id="@id/calllog_listview_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50dip"
+            android:background="@null"
+            android:gravity="center"
+            android:text="@string/calllog_empty_view_label"
+            android:textSize="17dp"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@id/calllog_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:divider="@null"
+            android:drawSelectorOnTop="true"
+            android:listSelector="@android:color/transparent" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<level-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:drawable="@drawable/icon_ptt_54"
+        android:maxLevel="0" />
+    <item android:drawable="@drawable/ptt_icon_144"
+        android:maxLevel="1" />
+    <item android:drawable="@drawable/sing"
+        android:maxLevel="2" />
+</level-list>
