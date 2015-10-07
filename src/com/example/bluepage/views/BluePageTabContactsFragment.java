@@ -4,23 +4,9 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.example.bluepage.BluePageConfig;
-import com.example.bluepage.BluePageConstants;
-import com.example.bluepage.R;
-import com.example.bluepage.dbmanager.BluePageContactsDao;
-import com.example.bluepage.model.BluePageContactsModel;
-import com.example.bluepage.utils.BaseListSort;
-import com.example.bluepage.utils.CircularImageView;
-import com.example.bluepage.utils.CustomTextView;
-import com.example.bluepage.utils.IndexableListView;
-import com.example.bluepage.utils.SimpleTextWatcher;
-import com.example.bluepage.utils.StringMatcher;
-import com.example.bluepage.utils.UtilHangul;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -41,7 +27,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -55,6 +40,18 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bluepage.BluePageConfig;
+import com.example.bluepage.R;
+import com.example.bluepage.dbmanager.BluePageContactsDao;
+import com.example.bluepage.model.BluePageContactsModel;
+import com.example.bluepage.utils.BaseListSort;
+import com.example.bluepage.utils.CircularImageView;
+import com.example.bluepage.utils.CustomTextView;
+import com.example.bluepage.utils.IndexableListView;
+import com.example.bluepage.utils.SimpleTextWatcher;
+import com.example.bluepage.utils.StringMatcher;
+import com.example.bluepage.utils.UtilHangul;
+
 public class BluePageTabContactsFragment extends Fragment implements LoaderCallbacks<ArrayList<BluePageContactsModel>> {
 
     private static BluePageTabContactsFragment sInstance;
@@ -62,18 +59,16 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
     private BluePageContactsDao mContactsDao;
     protected ArrayList<BluePageContactsListObject> mObjectList = new ArrayList<BluePageContactsListObject>();
     protected ArrayList<BluePageContactsModel> mContactsList = new ArrayList<BluePageContactsModel>();
-    protected HashSet<String> mSelectedDataSet = new HashSet<String>();
     protected IndexableListView mListView;
     private EditText mSearchEdit;
     private ImageView mSearchCancelBtn;
     private CustomTextView mEmptyView;
     protected Loader<ArrayList<BluePageContactsModel>> mLoader;
-    private ContentObserver mPttContactsObserver, mOemContactsObserver;
+    private ContentObserver mContactsObserver;
     private InputMethodManager mImm;
     private String mSearchInputString = "";
     private Context mContext;
     private boolean mVisibleLabel = true;
-    private boolean mIsSelectable, mIsSelectedAll;
 
     public static synchronized BluePageTabContactsFragment getInstance() {
         if (sInstance == null) {
@@ -96,7 +91,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIsSelectable = getActivity().getIntent().getBooleanExtra(BluePageConstants.INTENT_KEY_CONTACTS_IS_SELECTABLE_MODE, false);
         mContactsDao = BluePageContactsDao.getInstance(mContext);
         mAdapter = new ContactsTabContactsAdapter();
         mImm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -139,14 +133,13 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
     public void onResume() {
         super.onResume();
 
-        getActivity().getContentResolver().registerContentObserver(BluePageContactsDao.CONTENT_URI, true, mPttContactsObserver);
-        getActivity().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mOemContactsObserver);
+        getActivity().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, mContactsObserver);
 
         if (StringUtils.isEmpty(mSearchInputString)) {
             long contactsLastUpdated = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                .getLong(BluePageConfig.PREF_KEY_CONTACTS_MEMBERS_UPDATE_TIMESTAMP, 0);
+                .getLong(BluePageConfig.PREF_KEY_CONTACTS_UPDATE_TIMESTAMP, 0);
 
-            mContactsDao.doCheckOemContactsUpdated(contactsLastUpdated, null);
+            mContactsDao.doCheckContactsUpdated(contactsLastUpdated, null);
         }
     }
 
@@ -154,8 +147,7 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
     public void onPause() {
         super.onPause();
 
-        getActivity().getContentResolver().unregisterContentObserver(mPttContactsObserver);
-        getActivity().getContentResolver().unregisterContentObserver(mOemContactsObserver);
+        getActivity().getContentResolver().unregisterContentObserver(mContactsObserver);
         if (mLoader != null) {
             mLoader.stopLoading();
         }
@@ -177,15 +169,9 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
     }
 
     public void clearAllData() {
-        if (mSelectedDataSet != null) {
-            mSelectedDataSet.clear();
-        }
-
         if (mSearchEdit != null) {
             clearSearchFilter();
         }
-
-        setSelectedAll(false);
     }
 
     private void initListeners() {
@@ -204,20 +190,13 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
             }
         });
 
-        mPttContactsObserver = new ContentObserver(new Handler()) {
-            @Override
-            public void onChange(boolean selfChange) {
-                mLoader.startLoading();
-            }
-        };
-
-        mOemContactsObserver = new ContentObserver(new Handler()) {
+        mContactsObserver = new ContentObserver(new Handler()) {
             @Override
             public void onChange(boolean selfChange) {
                 long contactsLastUpdated = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext())
-                    .getLong(BluePageConfig.PREF_KEY_CONTACTS_MEMBERS_UPDATE_TIMESTAMP, 0);
+                    .getLong(BluePageConfig.PREF_KEY_CONTACTS_UPDATE_TIMESTAMP, 0);
 
-                mContactsDao.doCheckOemContactsUpdated(contactsLastUpdated, null);
+                mContactsDao.doCheckContactsUpdated(contactsLastUpdated, null);
             }
         };
 
@@ -236,7 +215,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
         mSearchEdit.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         mListView.showScrollbar(false);
@@ -263,7 +241,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
         mListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-                // This listener is not called because list item is clickable.
             }
         });
 
@@ -275,27 +252,9 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
         });
     }
 
-    public void handleItemClick(View view, int position) {
-        if (mAdapter.getItem(position).getType() == BluePageContactsListObject.LIST_TYPE_CONTACT) {
-            BluePageContactsModel model = (BluePageContactsModel) mAdapter.getItem(position).getObject();
-            String lookupKey = model.getLookupKey();
-            String pttNumber = model.getPttNumber();
-            Intent intent = new Intent();
-
-            if (StringUtils.isNotEmpty(lookupKey) || StringUtils.isNotEmpty(pttNumber)) {
-                intent.setAction(getActivity().getPackageName() + BluePageConstants.INTENT_ACTION_CONTACTS_DETAIL);
-                intent.putExtra(BluePageConstants.INTENT_KEY_CONTACTS_LOOKUP_KEY, lookupKey);
-                intent.putExtra(BluePageConstants.INTENT_KEY_CONTACTS_PTT_NUMBER, pttNumber);
-                startActivityForResult(intent, BluePageConstants.INTENT_REQUEST_CONTACTS_DETAIL);
-            } else {
-                showToast(getString(R.string.contacts_detail_no_id));
-            }
-        }
-    }
-
     @Override
     public Loader<ArrayList<BluePageContactsModel>> onCreateLoader(int arg0, Bundle arg1) {
-        mLoader = mContactsDao.getAllDataLoader();
+        mLoader = mContactsDao.getContactsLoader();
         return mLoader;
     }
 
@@ -426,38 +385,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
         }
     }
 
-    protected void setCheckAllMemberList() {
-        if (mIsSelectable) {
-            for (BluePageContactsModel model : mContactsList) {
-                if (StringUtils.isNotEmpty(model.getPttNumber())) {
-                    mSelectedDataSet.add(model.getTypicalId());
-                }
-            }
-
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    protected void setUncheckAllMemberList() {
-        if (mIsSelectable) {
-            mSelectedDataSet.clear();
-
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    protected ArrayList<String> getSelectedMemberList() {
-        return new ArrayList<String>(mSelectedDataSet);
-    }
-
-    protected boolean getSelectedAll() {
-        return mIsSelectedAll;
-    }
-
-    protected void setSelectedAll(boolean selected) {
-        mIsSelectedAll = selected;
-    }
-
     protected void showToast(final String message) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -541,10 +468,8 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
         }
 
         protected class ViewHolder {
-            ImageView checkbox;
             CircularImageView thumb;
             CustomTextView displayName;
-            CustomTextView numberType;
             CustomTextView number;
         }
 
@@ -570,7 +495,7 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
             View view = convertView;
 
             if (view == null) {
-                view = inflator.inflate(R.layout.contacts_list_item_label, null);
+                view = inflator.inflate(R.layout.bluepage_contacts_list_item_label, null);
             }
 
             TextView tv = (TextView) view.findViewById(R.id.contacts_list_label_textview);
@@ -591,19 +516,11 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
                 final ViewHolder holder;
 
                 if (view == null) {
-                    view = inflator.inflate(R.layout.contacts_list_item_contact, null);
+                    view = inflator.inflate(R.layout.bluepage_contacts_list_item, null);
                     holder = new ViewHolder();
-                    holder.checkbox = (ImageView) view.findViewById(R.id.contacts_item_checkbox);
                     holder.thumb = (CircularImageView) view.findViewById(R.id.contacts_item_thumb);
                     holder.displayName = (CustomTextView) view.findViewById(R.id.contacts_item_name);
-                    holder.numberType = (CustomTextView) view.findViewById(R.id.contacts_item_number_type);
                     holder.number = (CustomTextView) view.findViewById(R.id.contacts_item_number);
-
-                    if (mIsSelectable) {
-                        holder.checkbox.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.checkbox.setVisibility(View.GONE);
-                    }
 
                     view.setTag(holder);
                 } else {
@@ -611,22 +528,11 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
                     holder = (ViewHolder) view.getTag();
                 }
 
-                // Check Box
-                if (mIsSelectable) {
-                    if (StringUtils.isNotEmpty(model.getPttNumber())) {
-                        holder.checkbox.setEnabled(true);
-                        holder.checkbox.setSelected(mSelectedDataSet.contains(model.getTypicalId()));
-                    } else {
-                        holder.checkbox.setEnabled(false);
-                        holder.checkbox.setSelected(false);
-                    }
-                }
-
                 // Set Thumbnail Image
                 if (StringUtils.isNotEmpty(model.getPhotoUri())) {
                     holder.thumb.setImageURI(Uri.parse(model.getPhotoUri()));
                 } else {
-                    holder.thumb.setImageResource(R.drawable.img_viewmore_default);
+                    holder.thumb.setImageResource(R.drawable.img_incomingcall_default);
                 }
 
                 // Set Name
@@ -639,17 +545,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
                     holder.displayName.setColor(0, 0, model.getDisplayName());
                 }
 
-                // Set Number Type
-                if (StringUtils.isNotEmpty(model.getPttNumber())) {
-                    holder.numberType.setVisibility(View.VISIBLE);
-                    holder.numberType.setText(R.string.contacts_member_number_type_ptt);
-                } else if (StringUtils.isNotEmpty(model.getLookupKey())) {
-                    holder.numberType.setVisibility(View.VISIBLE);
-                    holder.numberType.setText(R.string.contacts_member_number_type_volte);
-                } else {
-                    holder.numberType.setVisibility(View.GONE);
-                }
-
                 // Set Number
                 if (StringUtils.isNotEmpty(mSearchInputString)
                     && (model.getSearchMatchedNumberStart() >= 0)
@@ -659,29 +554,6 @@ public class BluePageTabContactsFragment extends Fragment implements LoaderCallb
                     // It is same action with setText().
                     holder.number.setColor(0, 0, model.getPhonePrimary());
                 }
-
-                // Add click listener.
-                view.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mIsSelectable) {
-                            View checkbox = v.findViewById(R.id.contacts_item_checkbox);
-                            if (checkbox.isEnabled()) {
-                                String id = model.getTypicalId();
-                                boolean bSelected = !checkbox.isSelected();
-                                checkbox.setSelected(bSelected);
-
-                                if (bSelected) {
-                                    mSelectedDataSet.add(id);
-                                } else {
-                                    mSelectedDataSet.remove(id);
-                                }
-                            }
-                        } else {
-                            handleItemClick(v, position);
-                        }
-                    }
-                });
             }
 
             return view;

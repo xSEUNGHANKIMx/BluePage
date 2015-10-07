@@ -21,8 +21,8 @@
             android:id="@id/contacts_search_left_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginLeft="4dp"
             android:scaleType="fitXY"
             android:src="@drawable/btn_search" />
 
@@ -34,7 +34,7 @@
             android:background="@android:color/transparent"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:hint="@string/contacts_edit_search_hint"
+            android:hint="@string/bluepage_contacts_edit_search_hint"
             android:paddingEnd="4dp"
             android:paddingStart="4dp"
             android:singleLine="true"
@@ -49,7 +49,7 @@
             android:layout_height="24dp"
             android:layout_marginEnd="2dp"
             android:layout_marginStart="2dp"
-            android:background="@drawable/im_ripple"
+            android:background="@drawable/bluepage_select_selector"
             android:scaleType="fitXY"
             android:src="@drawable/btn_delete"
             android:visibility="gone" />

@@ -17,8 +17,8 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">7</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/keypad_font_size</item>
-        <item name="android:textColor">@color/keypad_font_color</item>
+        <item name="android:textSize">24dp</item>
+        <item name="android:textColor">@color/bluepage_keypad_font_color</item>
     </style>
 
     <style name="phone_key_type_small">
@@ -26,8 +26,8 @@
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">4</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/keypad_font_size_small</item>
-        <item name="android:textColor">@color/keypad_font_color_small</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">@color/bluepage_keypad_font_color_small</item>
     </style>
 
     <style name="phone_key_type_normal">
@@ -35,8 +35,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">14dp</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/keypad_font_size_normal</item>
-        <item name="android:textColor">@color/keypad_font_color</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/bluepage_keypad_font_color</item>
     </style>
 
     <!-- Application theme. -->
@@ -51,11 +51,6 @@
     <style name="MyTextAppearanceSpinnerItem" parent="android:TextAppearance.Holo.Widget.TextView.SpinnerItem">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">14sp</item>
-    </style>
-
-    <style name="DialogSpinner" parent="@android:style/Widget.Holo.Spinner">
-        <item name="android:background">@drawable/spinner_bg</item>
-        <item name="android:spinnerItemStyle">@style/MySpinnerItem</item>
     </style>
 
 </resources>

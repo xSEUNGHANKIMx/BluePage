@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import android.annotation.SuppressLint;
@@ -21,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.CallLog;
-import android.provider.ContactsContract;
 import android.support.v4.content.Loader;
 
 import com.example.bluepage.BluePageConfig;
@@ -32,35 +30,19 @@ import com.example.bluepage.utils.Log;
 
 public class BluePageCallLogDao {
 
-    public static final int CAll_TYPE_OEM_INCOMING = CallLog.Calls.INCOMING_TYPE; // 1
-    public static final int CAll_TYPE_OEM_OUTGOING = CallLog.Calls.OUTGOING_TYPE; // 2
-    public static final int CAll_TYPE_OEM_MISSED = CallLog.Calls.MISSED_TYPE; // 3
-    public static final int CAll_TYPE_OEM_VOICEMAIL = CallLog.Calls.VOICEMAIL_TYPE; // 4
-    public static final int CAll_TYPE_OEM_OTHER = 10;
-
-    public static final int CAll_TYPE_PTT_INCOMING = 11;
-    public static final int CAll_TYPE_PTT_OUTGOING = 12;
-    public static final int CAll_TYPE_PTT_MISSED = 13;
-    public static final int CAll_TYPE_PTT_OTHER = 14;
-
-    public static final int CAll_KIND_NONE = 0;
-    public static final int CAll_KIND_VOICE_PTT = 101;
-    public static final int CAll_KIND_VIDEO_PTT = 102;
-    public static final int CAll_KIND_VOICE_CALL = 103;
-    public static final int CAll_KIND_VIDEO_CALL = 104;
-    public static final int CAll_KIND_MESSAGE = 105;
-    public static final int CAll_KIND_OEM_VOICE_CALL = 106;
-    public static final int CAll_KIND_OEM_VIDEO_CALL = 107;
-    public static final int CAll_KIND_OTHER = 110;
+    public static final int CAll_TYPE_INCOMING = CallLog.Calls.INCOMING_TYPE; // 1
+    public static final int CAll_TYPE_OUTGOING = CallLog.Calls.OUTGOING_TYPE; // 2
+    public static final int CAll_TYPE_MISSED = CallLog.Calls.MISSED_TYPE; // 3
+    public static final int CAll_TYPE_VOICEMAIL = CallLog.Calls.VOICEMAIL_TYPE; // 4
+    public static final int CAll_TYPE_OTHER = 10;
 
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_OEM_CALL_ID = "call_id"; // OEM Call Log has only.
+    public static final String COLUMN_CALL_ID = "call_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_NUMBER = "number";
     public static final String COLUMN_START = "date";
     public static final String COLUMN_DURATION = "duration";
     public static final String COLUMN_CALL_TYPE = "call_type";
-    public static final String COLUMN_CALL_KIND = "call_kind";
     public static final String COLUMN_COUNTRY_ISO = "countryiso";
     public static final String COLUMN_VOICEMAIL_URI = "voicemail_uri";
     public static final String COLUMN_GEOCODED_LOCATION = "geocoded_location";
@@ -73,15 +55,9 @@ public class BluePageCallLogDao {
     public static final String COLUMN_FORMATTED_NUMBER = "formatted_number";
     public static final String COLUMN_PRESENTATION = "presentation";
     public static final String COLUMN_CONTACTS_ID = "contacts_id";
-    public static final String COLUMN_IS_NEW = "new";
-    public static final String COLUMN_IS_PRE_ARGD = "is_pre_argd";
-    public static final String COLUMN_SIP_URI = "sip_uri";
-    public static final String COLUMN_SERVER_SESSION_ID = "server_session_id";
-    public static final String COLUMN_SESSION_ID = "session_id";
 
     public static final int SORT_BY_DATE = 0;
-    public static final int SORT_BY_GROUP = 1;
-    public static final int SORT_BY_ABC = 2;
+    public static final int SORT_BY_ABC = 1;
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + BluePageCallLogDao.class.getName());
     public static final String TABLE = "CALLLOG";
@@ -101,13 +77,12 @@ public class BluePageCallLogDao {
         // @formatter:on
         String sql = "CREATE TABLE " + TABLE + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + COLUMN_OEM_CALL_ID + " TEXT,"
+            + COLUMN_CALL_ID + " TEXT,"
             + COLUMN_NAME + " TEXT,"
             + COLUMN_NUMBER + " TEXT,"
             + COLUMN_START + " INTEGER DEFAULT 0,"
             + COLUMN_DURATION + " INTEGER DEFAULT 0,"
             + COLUMN_CALL_TYPE + " INTEGER DEFAULT 0,"
-            + COLUMN_CALL_KIND + " INTEGER DEFAULT 0,"
             + COLUMN_COUNTRY_ISO + " TEXT,"
             + COLUMN_VOICEMAIL_URI + " TEXT,"
             + COLUMN_GEOCODED_LOCATION + " TEXT,"
@@ -119,13 +94,7 @@ public class BluePageCallLogDao {
             + COLUMN_PHOTO_ID + " TEXT,"
             + COLUMN_FORMATTED_NUMBER + " TEXT,"
             + COLUMN_PRESENTATION + " INTEGER DEFAULT 0,"
-            + COLUMN_CONTACTS_ID + " TEXT,"
-            + COLUMN_IS_NEW + " INTEGER DEFAULT 0,"
-            + COLUMN_IS_PRE_ARGD + " INTEGER DEFAULT 0,"
-            + COLUMN_SIP_URI + " TEXT,"
-            + COLUMN_SERVER_SESSION_ID + " TEXT,"
-            + COLUMN_SESSION_ID + " TEXT);";
-
+            + COLUMN_CONTACTS_ID + " TEXT);";
         db.execSQL(sql);
     }
 
@@ -151,62 +120,6 @@ public class BluePageCallLogDao {
                 return loadAll();
             }
         };
-    }
-
-
-
-    public void saveServerSessionId(String serverSessionId, String sessionId) {
-        if (StringUtils.isEmpty(serverSessionId) || StringUtils.isEmpty(sessionId)
-            || StringUtils.isEmpty(BluePageConfig.mPendingServerSessionId)) {
-            return;
-        }
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-        int updateCount = 0;
-
-        if (db != null) {
-            try {
-                ContentValues values = new ContentValues();
-                String where = COLUMN_START + "=?" + " AND " + COLUMN_SESSION_ID + "=?";
-                String[] whereArgs = new String[] { BluePageConfig.mPendingServerSessionId, sessionId };
-
-                db.beginTransaction();
-                values.put(COLUMN_SERVER_SESSION_ID, serverSessionId);
-                updateCount = db.update(TABLE, values, where, whereArgs);
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                if (updateCount > 0) {
-                    mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                    mModelMap.clear();
-                }
-                db.endTransaction();
-            }
-        }
-
-        BluePageConfig.mPendingServerSessionId = "";
-    }
-
-    public void saveCallLog(BluePageCallLogModel model) {
-        if (model == null) {
-            return;
-        }
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                db.beginTransaction();
-                saveOneSafe(db, model);
-                db.setTransactionSuccessful();
-            } finally {
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
     }
 
     public void saveCallLogs(ArrayList<BluePageCallLogModel> list) {
@@ -246,13 +159,12 @@ public class BluePageCallLogDao {
             values.put(COLUMN_ID, model.getId());
         }
 
-        values.put(COLUMN_OEM_CALL_ID, calllog.getOemCallId());
+        values.put(COLUMN_CALL_ID, calllog.getCallId());
         values.put(COLUMN_NAME, calllog.getName());
         values.put(COLUMN_NUMBER, calllog.getNumber());
         values.put(COLUMN_START, calllog.getStartTimeMillis());
         values.put(COLUMN_DURATION, calllog.getDurationMillis());
         values.put(COLUMN_CALL_TYPE, calllog.getCallType());
-        values.put(COLUMN_CALL_KIND, calllog.getCallKind());
         values.put(COLUMN_COUNTRY_ISO, calllog.getCountryiso());
         values.put(COLUMN_VOICEMAIL_URI, calllog.getVoicemail_uri());
         values.put(COLUMN_GEOCODED_LOCATION, calllog.getGeocoded_location());
@@ -265,10 +177,6 @@ public class BluePageCallLogDao {
         values.put(COLUMN_FORMATTED_NUMBER, calllog.getFormatted_number());
         values.put(COLUMN_PRESENTATION, calllog.getPresentation());
         values.put(COLUMN_CONTACTS_ID, calllog.getContacts_id());
-        values.put(COLUMN_IS_NEW, calllog.isNew() ? 1 : 0);
-        values.put(COLUMN_IS_PRE_ARGD, calllog.isPreArgd() ? 1 : 0);
-        values.put(COLUMN_SERVER_SESSION_ID, calllog.getServerSessionId());
-        values.put(COLUMN_SESSION_ID, calllog.getSessionId());
 
         int updatedCount = db.update(TABLE, values, where, whereArgs);
         if (updatedCount == 0) {
@@ -285,36 +193,6 @@ public class BluePageCallLogDao {
             try {
                 final String where = COLUMN_ID + "=?";
                 final String[] whereArgs = { String.valueOf(_id) };
-
-                db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, where, whereArgs, null, null, null, "1");
-                if (cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        model = fromCursor(cursor);
-                    }
-                    cursor.close();
-                }
-
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return model;
-    }
-
-    public BluePageCallLogModel loadOneByOemCallLogId(String oemCallLogId) {
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-        BluePageCallLogModel model = null;
-
-        if (db != null) {
-            try {
-                final String where = COLUMN_OEM_CALL_ID + "=?";
-                final String[] whereArgs = { oemCallLogId };
 
                 db.beginTransaction();
                 Cursor cursor = db.query(TABLE, null, where, whereArgs, null, null, null, "1");
@@ -360,65 +238,6 @@ public class BluePageCallLogDao {
                             cursor.close();
                         }
                         break;
-                    case SORT_BY_GROUP:
-                        // 1. Query Group Pre-arranged call
-                        StringBuilder prearrangedSQL = new StringBuilder();
-                        prearrangedSQL.append("SELECT * FROM CALLLOG ");
-                        prearrangedSQL.append("WHERE " + COLUMN_IS_PRE_ARGD + "=1 ");
-                        prearrangedSQL.append("AND (" + COLUMN_OEM_CALL_ID + " IS NULL OR " + COLUMN_OEM_CALL_ID + "='') ");
-                        prearrangedSQL.append("ORDER BY " + COLUMN_NAME + " COLLATE LOCALIZED;");
-                        Cursor prearrangedCursor = db.rawQuery(prearrangedSQL.toString(), null);
-                        if (prearrangedCursor != null) {
-                            if (prearrangedCursor.moveToFirst() == true) {
-                                do {
-                                    BluePageCallLogModel model = fromCursor(prearrangedCursor);
-                                    if (model != null) {
-                                        result.add(model);
-                                    }
-                                } while (prearrangedCursor.moveToNext());
-                            }
-                            prearrangedCursor.close();
-                        }
-
-                        // 2. Query Ad-hoc call
-                        StringBuilder adhocSQL = new StringBuilder();
-                        adhocSQL.append("SELECT * FROM CALLLOG ");
-                        adhocSQL.append("WHERE " + COLUMN_IS_PRE_ARGD + "=0 ");
-                        adhocSQL.append("AND (" + COLUMN_OEM_CALL_ID + " IS NULL OR " + COLUMN_OEM_CALL_ID + "='') ");
-                        adhocSQL.append("ORDER BY " + COLUMN_NAME + " COLLATE LOCALIZED;");
-                        Cursor adhocCursor = db.rawQuery(adhocSQL.toString(), null);
-                        if (adhocCursor != null) {
-                            if (adhocCursor.moveToFirst() == true) {
-                                do {
-                                    BluePageCallLogModel model = fromCursor(adhocCursor);
-                                    if (model != null) {
-                                        result.add(model);
-                                    }
-                                } while (adhocCursor.moveToNext());
-                            }
-                            adhocCursor.close();
-                        }
-
-                        // 3. Query OEM call
-                        StringBuilder oemSQL = new StringBuilder();
-                        oemSQL.append("SELECT * FROM CALLLOG ");
-                        oemSQL.append("WHERE " + COLUMN_IS_PRE_ARGD + "=0 ");
-                        oemSQL.append("AND (" + COLUMN_OEM_CALL_ID + " IS NOT NULL AND " + COLUMN_OEM_CALL_ID + "!='') ");
-                        oemSQL.append("ORDER BY " + COLUMN_NAME + " COLLATE LOCALIZED;");
-                        Cursor oemCursor = db.rawQuery(oemSQL.toString(), null);
-                        if (oemCursor != null) {
-                            if (oemCursor.moveToFirst() == true) {
-                                do {
-                                    BluePageCallLogModel model = fromCursor(oemCursor);
-                                    if (model != null) {
-                                        result.add(model);
-                                    }
-                                } while (oemCursor.moveToNext());
-                            }
-                            oemCursor.close();
-                            cursor = null;
-                        }
-                        break;
                     case SORT_BY_ABC:
                         cursor = db.query(TABLE, null, null, null, null, null, COLUMN_NAME + " COLLATE LOCALIZED");
                         if (cursor != null) {
@@ -445,7 +264,8 @@ public class BluePageCallLogDao {
         return result;
     }
 
-    public void deleteOneByCallLogId(int _id, BluePageCallLogDaoCallBack<Void> callback) {
+
+    public void deleteByCallLogIdList(ArrayList<String> callLogIDList) {
         int deletedCount = 0;
 
         BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
@@ -453,98 +273,10 @@ public class BluePageCallLogDao {
 
         if (db != null) {
             try {
-                final String where = COLUMN_ID + "=?";
-                final String[] whereArgs = { String.valueOf(_id) };
-
+                final String where = COLUMN_CALL_ID + "=?";
                 db.beginTransaction();
-                deletedCount = db.delete(TABLE, where, whereArgs);
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                notifyCallbackFailure(callback, null);
-                Log.e("", e.getMessage(), e);
-            } finally {
-                notifyCallbackCompleted(callback, null);
-                if (deletedCount > 0) {
-                    mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                }
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void deleteByCallLogIdList(ArrayList<Integer> callLogIDList, BluePageCallLogDaoCallBack<Void> callback) {
-        int deletedCount = 0;
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = COLUMN_ID + "=?";
-                db.beginTransaction();
-                for (int callLogId : callLogIDList) {
-                    BluePageCallLogModel model = loadOneByCallLogId(callLogId);
-                    if (model != null) {
-                        if (StringUtils.isNotEmpty(model.getOemCallId())) {
-                            deleteOneByOemCallLogId(model.getOemCallId());
-                        } else {
-                            final String[] whereArgs = { String.valueOf(callLogId) };
-                            deletedCount = db.delete(TABLE, where, whereArgs);
-                        }
-                    }
-                }
-
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                notifyCallbackFailure(callback, null);
-                Log.e("", e.getMessage(), e);
-            } finally {
-                notifyCallbackCompleted(callback, null);
-                if (deletedCount > 0) {
-                    mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                }
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void deleteOneByOemCallLogId(String oemCallLogId) {
-        int deletedCount = 0;
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = COLUMN_OEM_CALL_ID + "=?";
-                final String[] whereArgs = { oemCallLogId };
-
-                db.beginTransaction();
-                deletedCount = db.delete(TABLE, where, whereArgs);
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                if (deletedCount > 0) {
-                    mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                }
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void deleteByOemCallLogIdList(ArrayList<String> oemCallLogIDList) {
-        int deletedCount = 0;
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = COLUMN_OEM_CALL_ID + "=?";
-                db.beginTransaction();
-                for (String oemCallLogId : oemCallLogIDList) {
-                    final String[] whereArgs = { oemCallLogId };
+                for (String callLogId : callLogIDList) {
+                    final String[] whereArgs = { callLogId };
 
                     deletedCount = db.delete(TABLE, where, whereArgs);
                 }
@@ -561,64 +293,16 @@ public class BluePageCallLogDao {
         }
     }
 
-    public void removeNewTags() {
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                db.beginTransaction();
-                for (BluePageCallLogModel calllog : loadAll()) {
-                    if (calllog.isNew()) {
-                        calllog.setNew(false);
-                        saveOneSafe(db, calllog);
-                    }
-                }
-
-                db.setTransactionSuccessful();
-            } finally {
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void deleteCallLogWithoutSessionInfo() {
-        int deletedCount = 0;
-
-        BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = "(" + COLUMN_SERVER_SESSION_ID + " IS NULL OR " + COLUMN_SERVER_SESSION_ID + "='') "
-                    + "AND (" + COLUMN_OEM_CALL_ID + " IS NULL OR " + COLUMN_OEM_CALL_ID + "='') ";
-
-                db.beginTransaction();
-                deletedCount = db.delete(TABLE, where, null);
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                if (deletedCount > 0) {
-                    mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                }
-                db.endTransaction();
-            }
-        }
-    }
-
     private BluePageCallLogModel fromCursor(Cursor cursor) {
         BluePageCallLogModel model = new BluePageCallLogModel();
 
         model.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
-        model.setOemCallId(cursor.getString(cursor.getColumnIndex(COLUMN_OEM_CALL_ID)));
+        model.setCallId(cursor.getString(cursor.getColumnIndex(COLUMN_CALL_ID)));
         model.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME)));
         model.setNumber(cursor.getString(cursor.getColumnIndex(COLUMN_NUMBER)));
         model.setStartTimeMillis(cursor.getLong(cursor.getColumnIndex(COLUMN_START)));
         model.setDurationMillis(cursor.getLong(cursor.getColumnIndex(COLUMN_DURATION)));
         model.setCallType(cursor.getInt(cursor.getColumnIndex(COLUMN_CALL_TYPE)));
-        model.setCallKind(cursor.getInt(cursor.getColumnIndex(COLUMN_CALL_KIND)));
         model.setCountryiso(cursor.getString(cursor.getColumnIndex(COLUMN_COUNTRY_ISO)));
         model.setVoicemail_uri(cursor.getString(cursor.getColumnIndex(COLUMN_VOICEMAIL_URI)));
         model.setGeocoded_location(cursor.getString(cursor.getColumnIndex(COLUMN_GEOCODED_LOCATION)));
@@ -631,10 +315,6 @@ public class BluePageCallLogDao {
         model.setFormatted_number(cursor.getString(cursor.getColumnIndex(COLUMN_FORMATTED_NUMBER)));
         model.setPresentation(cursor.getInt(cursor.getColumnIndex(COLUMN_PRESENTATION)));
         model.setContacts_id(cursor.getString(cursor.getColumnIndex(COLUMN_CONTACTS_ID)));
-        model.setNew(cursor.getInt(cursor.getColumnIndex(COLUMN_IS_NEW)) == 1 ? true : false);
-        model.setPreArgd(cursor.getInt(cursor.getColumnIndex(COLUMN_IS_PRE_ARGD)) == 1 ? true : false);
-        model.setServerSessionId(cursor.getString(cursor.getColumnIndex(COLUMN_SERVER_SESSION_ID)));
-        model.setSessionId(cursor.getString(cursor.getColumnIndex(COLUMN_SESSION_ID)));
 
         long start = model.getStartTimeMillis();
         long duration = model.getDurationMillis();
@@ -649,21 +329,6 @@ public class BluePageCallLogDao {
         return model;
     }
 
-    private String getLookupKeyFromLookupUri(Uri uri) {
-        String lookupKey = "";
-        String[] projection = ArrayUtils.toArray(ContactsContract.Contacts.LOOKUP_KEY);
-        Cursor cursor = mAppContext.getContentResolver().query(uri, projection, null, null, null);
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                lookupKey = cursor.getString(0);
-            }
-            cursor.close();
-        }
-
-        return lookupKey;
-    }
-
     public void notifyContentObserver() {
         mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
     }
@@ -675,15 +340,15 @@ public class BluePageCallLogDao {
         int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
 
         if (hours < 1) {
-            duration = minutes + "분 " + seconds + "초";
+            duration = minutes + ":" + seconds;
         } else {
-            duration = hours + "시간 " + minutes + "분 " + seconds + "초";
+            duration = hours + ":" + minutes + ":" + seconds;
         }
         return duration;
     }
 
     private String getFormattedTimeString(long milliseconds) {
-        SimpleDateFormat sdfDate = new SimpleDateFormat("M월dd일\na hh:mm");
+        SimpleDateFormat sdfDate = new SimpleDateFormat("hh:mm a");
         String sDate = sdfDate.format(milliseconds);
         return sDate;
     }
@@ -694,21 +359,21 @@ public class BluePageCallLogDao {
         String sToday = sdfDate.format(System.currentTimeMillis());
 
         if (StringUtils.equals(sDate, sToday)) {
-            return mAppContext.getString(R.string.calllog_list_section_label_today);
+            return mAppContext.getString(R.string.bluepage_calllog_list_section_label_today);
         } else {
             return sDate;
         }
     }
 
-    public void doCheckOemCallLogUpdated(long lastUpdate, final BluePageCallLogDaoCallBack<Void> callback) {
-        OemCallLogUpdateChecker updateChecker = new OemCallLogUpdateChecker(callback);
+    public void doCheckCallLogUpdated(long lastUpdate, final BluePageCallLogDaoCallBack<Void> callback) {
+        CallLogUpdateChecker updateChecker = new CallLogUpdateChecker(callback);
         updateChecker.execute(lastUpdate);
     }
 
-    private class OemCallLogUpdateChecker extends AsyncTask<Long, Void, Void> {
+    private class CallLogUpdateChecker extends AsyncTask<Long, Void, Void> {
         BluePageCallLogDaoCallBack<Void> callback;
 
-        public OemCallLogUpdateChecker(final BluePageCallLogDaoCallBack<Void> cb) {
+        public CallLogUpdateChecker(final BluePageCallLogDaoCallBack<Void> cb) {
             callback = cb;
         }
 
@@ -719,8 +384,8 @@ public class BluePageCallLogDao {
 
         @Override
         protected Void doInBackground(Long... params) {
-            checkOnlyOEMUpdatedCallLog(params[0]);
-            checkOnlyOEMDeletedCallLog();
+            checkUpdatedCallLog(params[0]);
+            checkDeletedCallLog();
 
             return null;
         }
@@ -734,7 +399,7 @@ public class BluePageCallLogDao {
     }
 
     @SuppressLint("InlinedApi")
-    private void checkOnlyOEMUpdatedCallLog(Long lastUpdated) {
+    private void checkUpdatedCallLog(Long lastUpdated) {
         ArrayList<BluePageCallLogModel> resultList = new ArrayList<BluePageCallLogModel>();
         Cursor callLogCursor = mAppContext.getContentResolver()
             .query(CallLog.Calls.CONTENT_URI, null, CallLog.Calls.DATE + " > ?",
@@ -744,7 +409,7 @@ public class BluePageCallLogDao {
             while (callLogCursor.moveToNext()) {
                 BluePageCallLogModel model = new BluePageCallLogModel();
 
-                String oemCallId = callLogCursor.getString(callLogCursor
+                String callId = callLogCursor.getString(callLogCursor
                     .getColumnIndex(CallLog.Calls._ID));
                 String name = callLogCursor.getString(callLogCursor
                     .getColumnIndex(CallLog.Calls.CACHED_NAME));
@@ -758,7 +423,6 @@ public class BluePageCallLogDao {
                     .getColumnIndex(CallLog.Calls.DURATION));
                 int callType = callLogCursor.getInt(callLogCursor
                     .getColumnIndex(CallLog.Calls.TYPE));
-                int callKind = CAll_KIND_OEM_VOICE_CALL; // Temp. Video call is not an action. It is different by Manufacture.
 
                 String durationString = getFormattedDurationString(durationMillis * 1000);
                 String startTimeString = getFormattedTimeString(dateTimeMillis);
@@ -790,39 +454,17 @@ public class BluePageCallLogDao {
                 int presentation = callLogCursor.getInt(callLogCursor
                     .getColumnIndex(CallLog.Calls.NUMBER_PRESENTATION));
                 String contacts_id = ""; /*= callLogCursor.getString(12); // Oops!! */
-                boolean isNew = false;
-                boolean isPreArgd = false;
 
-                /*                if (StringUtils.isNotEmpty(lookup_uri)) {
-                                                        if (StringUtils.isEmpty(photo_id) || photo_id.equals("0")) {
-                                        String[] projection = ArrayUtils.toArray(ContactsContract.Contacts.PHOTO_ID);
-                                        Cursor cursor = mAppContext.getContentResolver()
-                                            .query(Uri.parse(lookup_uri), projection, null, null, null);
-                                        if ((cursor != null) && cursor.moveToFirst()) {
-                                            photo_id = Long.toString(cursor.getLong(0));
-                                            cursor.close();
-                                        }
-                                    }
-
-                                    if (StringUtils.isEmpty(contacts_id) || contacts_id.equals("0")) {
-                                        String[] projection = ArrayUtils.toArray(ContactsContract.Contacts._ID);
-                                        Cursor cursor = mAppContext.getContentResolver()
-                                            .query(Uri.parse(lookup_uri), projection, null, null, null);
-                                        if ((cursor != null) && cursor.moveToFirst()) {
-                                            contacts_id = Long.toString(cursor.getLong(0));
-                                            cursor.close();
-                                        }
-                                    }
-                                }*/
-
-                model.setOemCallId(oemCallId);
+                model.setCallId(callId);
                 model.setName(name);
                 model.setNumber(cacheNumber);
+                model.setStartTimeMillis(dateTimeMillis);
+                model.setEndTimeMillis(dateTimeMillis + durationMillis);
+                model.setDurationMillis(durationMillis);
                 model.setStartTimeString(startTimeString);
                 model.setEndTimeString(endTimeString);
                 model.setDurationString(durationString);
                 model.setCallType(callType);
-                model.setCallKind(callKind);
                 model.setCountryiso(countryiso);
                 model.setVoicemail_uri(voicemail_uri);
                 model.setGeocoded_location(geocoded_location);
@@ -835,10 +477,12 @@ public class BluePageCallLogDao {
                 model.setFormatted_number(formatted_number);
                 model.setPresentation(presentation);
                 model.setContacts_id(contacts_id);
-                model.setNew(isNew);
-                model.setPreArgd(isPreArgd);
 
                 resultList.add(model);
+
+                if (resultList.size() > 99) {
+                    break;
+                }
             }
             callLogCursor.close();
         }
@@ -848,23 +492,22 @@ public class BluePageCallLogDao {
         }
     }
 
-    private void checkOnlyOEMDeletedCallLog() {
-        HashSet<String> oemCallLogIdSet = new HashSet<String>();
+    private void checkDeletedCallLog() {
+        HashSet<String> callLogIdSet = new HashSet<String>();
         BluePageCallLogDBManager dbMgr = BluePageCallLogDBManager.getInstance(mAppContext);
         SQLiteDatabase db = dbMgr.getReadableDB();
-        String oemCallLogId = null;
+        String callLogId = null;
 
         if (db != null) {
-            // 1. Get OemCallIds from Local DB.
             try {
                 db.beginTransaction();
-                Cursor localCursor = db.query(TABLE, new String[] { COLUMN_OEM_CALL_ID }, null, null, null, null, null);
+                Cursor localCursor = db.query(TABLE, new String[] { COLUMN_CALL_ID }, null, null, null, null, null);
                 if (localCursor != null) {
                     if (localCursor.moveToFirst()) {
                         do {
-                            oemCallLogId = localCursor.getString(0);
-                            if (StringUtils.isNotEmpty(oemCallLogId)) {
-                                oemCallLogIdSet.add(oemCallLogId);
+                            callLogId = localCursor.getString(0);
+                            if (StringUtils.isNotEmpty(callLogId)) {
+                                callLogIdSet.add(callLogId);
                             }
                         } while (localCursor.moveToNext());
                     }
@@ -875,26 +518,24 @@ public class BluePageCallLogDao {
                 db.endTransaction();
             }
 
-            // 2. Get OemCallLogIds from OEM DB.
             Uri callLogUri = CallLog.Calls.CONTENT_URI;
-            Cursor oemCallLogCursor = mAppContext.getContentResolver().query(callLogUri,
+            Cursor callLogCursor = mAppContext.getContentResolver().query(callLogUri,
                 new String[] { CallLog.Calls._ID }, null, null, null);
 
-            if (oemCallLogCursor != null) {
-                if (oemCallLogCursor.moveToFirst()) {
+            if (callLogCursor != null) {
+                if (callLogCursor.moveToFirst()) {
                     do {
-                        oemCallLogId = oemCallLogCursor.getString(0);
-                        if (StringUtils.isNotEmpty(oemCallLogId)) {
-                            oemCallLogIdSet.remove(oemCallLogId);
+                        callLogId = callLogCursor.getString(0);
+                        if (StringUtils.isNotEmpty(callLogId)) {
+                            callLogIdSet.remove(callLogId);
                         }
-                    } while (oemCallLogCursor.moveToNext());
+                    } while (callLogCursor.moveToNext());
                 }
-                oemCallLogCursor.close();
+                callLogCursor.close();
             }
 
-            // 3. Finally, delete it if OEM call log was deleted.
-            if (oemCallLogIdSet.size() > 0) {
-                deleteByOemCallLogIdList(new ArrayList<String>(oemCallLogIdSet));
+            if (callLogIdSet.size() > 0) {
+                deleteByCallLogIdList(new ArrayList<String>(callLogIdSet));
             } else {
                 mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
             }
@@ -905,7 +546,7 @@ public class BluePageCallLogDao {
         ArrayList<String> idList = new ArrayList<String>();
 
         for (BluePageContactsModel model : memberList) {
-            idList.add(model.getTypicalId());
+            idList.add(model.getLookupKey());
         }
 
         return idList;

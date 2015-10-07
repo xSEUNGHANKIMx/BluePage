@@ -1,13 +1,11 @@
 package com.example.bluepage.dbmanager;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.bluepage.BluePageConfig;
-import com.example.bluepage.utils.Log;
 
 public class BluePageContactsDBManager {
 
@@ -82,18 +80,5 @@ public class BluePageContactsDBManager {
             }
         }
 
-        private void addColumn(SQLiteDatabase db, String table, String column, String type, String defValue) {
-            Cursor c = db.query(table, null, null, null, null, null, null);
-
-            if (c != null) {
-                if (c.getColumnIndex(column) == -1) {
-                    String sql = "ALTER TABLE " + table + " ADD COLUMN " + column + " " + type + " DEFAULT " + defValue;
-                    db.execSQL(sql);
-                }
-                c.close();
-            } else {
-                Log.v(this.toString(), "Failed to add " + column + " into " + table);
-            }
-        }
     }
 }

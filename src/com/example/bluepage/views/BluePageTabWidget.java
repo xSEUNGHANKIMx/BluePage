@@ -96,18 +96,18 @@ public class BluePageTabWidget extends HorizontalScrollView {
         mTabsContainer.addView(tab1Layout, TAB_1, mTabLayoutParams);
         tab1Btn = (Button) tab1Layout.findViewById(R.id.contacts_tab_widget_button);
         if (tab1Btn != null) {
-            tab1Btn.setText(R.string.contacts_tab_ptt_group);
+            tab1Btn.setText(R.string.bluepage_tab_dialer);
         }
 
         tab2Layout = LayoutInflater.from(mContext).inflate(R.layout.bluepage_tab_widget_layout, null);
         tab2Btn = (Button) tab2Layout.findViewById(R.id.contacts_tab_widget_button);
-        tab2Btn.setText(R.string.contacts_tab_organization);
+        tab2Btn.setText(R.string.bluepage_tab_calllog);
         mTabsContainer.addView(tab2Layout, TAB_2, mTabLayoutParams);
 
         tab3Layout_3 = LayoutInflater.from(mContext).inflate(R.layout.bluepage_tab_widget_layout, null);
         tab3Btn = (Button) tab3Layout_3.findViewById(R.id.contacts_tab_widget_button);
         if (tab3Btn != null) {
-            tab3Btn.setText(R.string.contacts_tab_contacts);
+            tab3Btn.setText(R.string.bluepage_tab_contacts);
             mTabsContainer.addView(tab3Layout_3, TAB_3, mTabLayoutParams);
         }
 

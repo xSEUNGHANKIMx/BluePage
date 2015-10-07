@@ -1,24 +1,18 @@
 package com.example.bluepage.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import org.apache.commons.lang3.StringUtils;
-
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
-public class BluePageCallLogModel implements Parcelable {
+public class BluePageCallLogModel {
 
     int _mId = -1;
-    String mOemCallId; // using for OEM Call Log.
+    String mCallId;
     String mName;
-    String mNumber; // [1] OEM: as Phone Number, [2] Pre-arranged Group: as GroupId, [3] Ad-hoc: as like GroupId.
+    String mNumber;
     long mStartTimeMillis;
     long mEndTimeMillis;
     long mDurationMillis;
@@ -26,7 +20,6 @@ public class BluePageCallLogModel implements Parcelable {
     String mEndTimeString;
     String mDurationString;
     int mCallType;
-    int mCallKind;
     String mCountryiso;
     String mVoicemail_uri;
     String mGeocoded_location;
@@ -40,18 +33,10 @@ public class BluePageCallLogModel implements Parcelable {
     int mPresentation;
     String mContacts_id;
     String mListLabel;
-    String mServerSessionId;
-    String mSessionId;
-    byte mIsNew;
-    byte mIsPreArgd;
-
-    // Application Data
-    private ArrayList<BluePageContactsModel> mMemberEntry;
-    private ArrayList<String> mMemberIdEntry;
 
     public BluePageCallLogModel() {
         _mId = -1;
-        mOemCallId = "";
+        mCallId = "";
         mName = "";
         mNumber = "";
         mStartTimeMillis = 0;
@@ -61,7 +46,6 @@ public class BluePageCallLogModel implements Parcelable {
         mEndTimeString = "";
         mDurationString = "";
         mCallType = 0;
-        mCallKind = 0;
         mCountryiso = "";
         mVoicemail_uri = "";
         mGeocoded_location = "";
@@ -75,13 +59,6 @@ public class BluePageCallLogModel implements Parcelable {
         mPresentation = 0;
         mContacts_id = "";
         mListLabel = "";
-        mServerSessionId = "";
-        mSessionId = "";
-        mIsNew = 1;
-        mIsPreArgd = 0;
-
-        mMemberEntry = new ArrayList<BluePageContactsModel>();
-        mMemberIdEntry = new ArrayList<String>();
     }
 
     public int getId() {
@@ -92,15 +69,15 @@ public class BluePageCallLogModel implements Parcelable {
         this._mId = id;
     }
 
-    public String getOemCallId() {
-        return mOemCallId;
+    public String getCallId() {
+        return mCallId;
     }
 
-    public void setOemCallId(String oemCallId) {
-        this.mOemCallId = oemCallId;
+    public void setCallId(String callId) {
+        this.mCallId = callId;
 
-        if (this.mOemCallId == null) {
-            this.mOemCallId = "";
+        if (this.mCallId == null) {
+            this.mCallId = "";
         }
     }
 
@@ -194,14 +171,6 @@ public class BluePageCallLogModel implements Parcelable {
 
     public void setCallType(int type) {
         this.mCallType = type;
-    }
-
-    public int getCallKind() {
-        return mCallKind;
-    }
-
-    public void setCallKind(int kind) {
-        this.mCallKind = kind;
     }
 
     public String getCountryiso() {
@@ -322,7 +291,7 @@ public class BluePageCallLogModel implements Parcelable {
             PhoneNumber phoneNumber = null;
             String formattedNumber = "";
 
-            if (StringUtils.isNotEmpty(mNormalized_number)) {
+            if (StringUtils.isNotEmpty(mNormalized_number) && (mNormalized_number.length() > 2)) {
                 try {
                     phoneNumber = phoneUtil.parse(mNormalized_number, "KR");
                     formattedNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
@@ -332,7 +301,7 @@ public class BluePageCallLogModel implements Parcelable {
 
                 mFormatted_number = formattedNumber;
             } else {
-                if (StringUtils.isNotEmpty(mNumber)) {
+                if (StringUtils.isNotEmpty(mNumber) && (mNormalized_number.length() > 2)) {
                     try {
                         phoneNumber = phoneUtil.parse(mNumber, "KR");
                         formattedNumber = phoneUtil.format(phoneNumber, PhoneNumberFormat.NATIONAL);
@@ -388,164 +357,6 @@ public class BluePageCallLogModel implements Parcelable {
         if (this.mListLabel == null) {
             this.mListLabel = "";
         }
-    }
-
-    public String getServerSessionId() {
-        return mServerSessionId;
-    }
-
-    public void setServerSessionId(String id) {
-        this.mServerSessionId = id;
-
-        if (this.mServerSessionId == null) {
-            this.mServerSessionId = "";
-        }
-    }
-
-    public String getSessionId() {
-        return mSessionId;
-    }
-
-    public void setSessionId(String id) {
-        this.mSessionId = id;
-
-        if (this.mSessionId == null) {
-            this.mSessionId = "";
-        }
-    }
-
-    public boolean isNew() {
-        return mIsNew == 1 ? true : false;
-    }
-
-    public void setNew(boolean isNew) {
-        this.mIsNew = (byte) (isNew == true ? 1 : 0);
-    }
-
-    public boolean isPreArgd() {
-        return mIsPreArgd == 1 ? true : false;
-    }
-
-    public void setPreArgd(boolean isPreArgd) {
-        this.mIsPreArgd = (byte) (isPreArgd == true ? 1 : 0);
-    }
-
-    public ArrayList<String> getMemberIdEntry() {
-        return mMemberIdEntry;
-    }
-
-    public ArrayList<BluePageContactsModel> getMemberEntry() {
-        return mMemberEntry;
-    }
-
-    public void setMemberEntry(ArrayList<BluePageContactsModel> entry) {
-        this.mMemberEntry = entry;
-    }
-
-    public void setMemberEntry(BluePageContactsModel model) {
-        this.mMemberEntry.add(model);
-    }
-
-    public void setMemberIdEntry(ArrayList<String> entry) {
-        HashSet<String> hashEntry = new HashSet<String>(entry);
-        this.mMemberIdEntry.clear();
-        this.mMemberIdEntry.addAll(hashEntry);
-    }
-
-    public void setMemberIdEntry(String id) {
-        this.mMemberIdEntry.add(id);
-    }
-
-    public static final Parcelable.Creator<BluePageCallLogModel> CREATOR = new Parcelable.Creator<BluePageCallLogModel>() {
-
-        @Override
-        public BluePageCallLogModel createFromParcel(Parcel source) {
-            return new BluePageCallLogModel(source);
-        }
-
-        @Override
-        public BluePageCallLogModel[] newArray(int size) {
-            return new BluePageCallLogModel[size];
-        }
-    };
-
-    public BluePageCallLogModel(Parcel in) {
-        mMemberEntry = new ArrayList<BluePageContactsModel>();
-        mMemberIdEntry = new ArrayList<String>();
-
-        _mId = in.readInt();
-        mOemCallId = in.readString();
-        mName = in.readString();
-        mNumber = in.readString();
-        mStartTimeMillis = in.readLong();
-        mEndTimeMillis = in.readLong();
-        mDurationMillis = in.readLong();
-        mStartTimeString = in.readString();
-        mEndTimeString = in.readString();
-        mDurationString = in.readString();
-        mCallType = in.readInt();
-        mCallKind = in.readInt();
-        mCountryiso = in.readString();
-        mVoicemail_uri = in.readString();
-        mGeocoded_location = in.readString();
-        mNumbertype = in.readString();
-        mNumberlabel = in.readString();
-        mLookup_uri = in.readString();
-        mMatched_number = in.readString();
-        mNormalized_number = in.readString();
-        mPhoto_id = in.readString();
-        mFormatted_number = in.readString();
-        mPresentation = in.readInt();
-        mContacts_id = in.readString();
-        mListLabel = in.readString();
-        mServerSessionId = in.readString();
-        mSessionId = in.readString();
-        mIsNew = in.readByte();
-        mIsPreArgd = in.readByte();
-
-        in.readTypedList(mMemberEntry, BluePageContactsModel.CREATOR);
-        in.readStringList(mMemberIdEntry);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(_mId);
-        dest.writeString(mOemCallId);
-        dest.writeString(mName);
-        dest.writeString(mNumber);
-        dest.writeLong(mStartTimeMillis);
-        dest.writeLong(mEndTimeMillis);
-        dest.writeLong(mDurationMillis);
-        dest.writeString(mStartTimeString);
-        dest.writeString(mEndTimeString);
-        dest.writeString(mDurationString);
-        dest.writeInt(mCallType);
-        dest.writeInt(mCallKind);
-        dest.writeString(mCountryiso);
-        dest.writeString(mVoicemail_uri);
-        dest.writeString(mGeocoded_location);
-        dest.writeString(mNumbertype);
-        dest.writeString(mNumberlabel);
-        dest.writeString(mLookup_uri);
-        dest.writeString(mMatched_number);
-        dest.writeString(mNormalized_number);
-        dest.writeString(mPhoto_id);
-        dest.writeString(mFormatted_number);
-        dest.writeInt(mPresentation);
-        dest.writeString(mContacts_id);
-        dest.writeString(mListLabel);
-        dest.writeString(mServerSessionId);
-        dest.writeString(mSessionId);
-        dest.writeByte(mIsNew);
-        dest.writeByte(mIsPreArgd);
-
-        dest.writeTypedList(mMemberEntry);
-        dest.writeStringList(mMemberIdEntry);
     }
 }
 

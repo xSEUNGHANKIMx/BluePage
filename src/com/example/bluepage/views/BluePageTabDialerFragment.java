@@ -1,9 +1,9 @@
 package com.example.bluepage.views;
 
-import com.example.bluepage.R;
-
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
@@ -16,17 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-/** 전화걸기 Activity
- *
- * @author jihun.cho */
-public class BluePageTabDialerFragment extends Fragment implements OnClickListener, OnLongClickListener {
+import com.example.bluepage.R;
 
-    private static final String LOG_TAG = BluePageTabDialerFragment.class.getSimpleName();
+
+public class BluePageTabDialerFragment extends Fragment implements OnClickListener, OnLongClickListener {
 
     private static BluePageTabDialerFragment sInstance;
     private TextView tvKeyPressView = null;
     private String strKeyMsg = null;
-    private static final int PTT_NUM_LENGTH = 7;
 
     public static synchronized BluePageTabDialerFragment getInstance() {
         if (sInstance == null) {
@@ -47,7 +44,7 @@ public class BluePageTabDialerFragment extends Fragment implements OnClickListen
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.call_dialler_layout, container, false);
+        return inflater.inflate(R.layout.bluepage_tab_dialer_layout, container, false);
     }
 
     @Override
@@ -142,8 +139,10 @@ public class BluePageTabDialerFragment extends Fragment implements OnClickListen
                 tvKeyPressView.setText(strKeyMsg);
                 break;
             case R.id.phone_key_voice_call:
+                makeCall();
                 break;
             case R.id.phone_key_message:
+                startSMS();
                 break;
             default:
                 break;
@@ -151,9 +150,22 @@ public class BluePageTabDialerFragment extends Fragment implements OnClickListen
 
     }
 
+    private void makeCall() {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:" + strKeyMsg));
+        startActivity(intent);
+    }
+
+    private void startSMS() {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setType("vnd.android-dir/mms-sms");
+        intent.setData(Uri.parse("sms:" + strKeyMsg));
+        startActivity(intent);
+    }
+
     @Override
     public boolean onLongClick(View v) {
-        // TODO Auto-generated method stub
         switch (v.getId()) {
             case R.id.phone_key_del:
                 strKeyMsg = "";

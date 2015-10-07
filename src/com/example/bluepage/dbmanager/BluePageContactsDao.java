@@ -1,15 +1,13 @@
-package com.example.bluepage.dbmanager;
+﻿package com.example.bluepage.dbmanager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import android.annotation.SuppressLint;
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -29,16 +27,6 @@ import com.example.bluepage.utils.Log;
 import com.example.bluepage.utils.UtilHangul;
 
 public class BluePageContactsDao {
-
-    public static final int TYPE_UNSELECTED = 0;
-    public static final int TYPE_PTT = 1;
-    public static final int TYPE_PHONE = 2;
-    public static final int TYPE_EMAIL = 3;
-    public static final int TYPE_WEBSITE = 4;
-    public static final int TYPE_COMPANY_NAME = 5;
-    public static final int TYPE_COMPANY_DEPARTMENT = 6;
-    public static final int TYPE_COMPANY_TITLE = 7;
-    public static final int TYPE_OTHER = 8;
 
     public static final String ID = "_id";
     public static final String CONTACT_ID = "contactId";
@@ -85,19 +73,11 @@ public class BluePageContactsDao {
     public static final String NOTE = "note";
     public static final String RELATION = "relation";
     public static final String PHOTO_URI = "photoUri";
-
-    public static final String PTT_NUMBER = "pttNumber";
-    public static final String PTT_PHOTO_URI = "pttPhotoUri";
-    public static final String PTT_PRESENCE = "pttPresence";
-    public static final String PTT_FAVORITE = "favorite";
-    public static final String PTT_ADHOC_MEMBER = "adhocMember";
-    public static final String PTT_UPDATED = "updated";
-
     public static final String SEARCH_KEY = "searchKey";
     public static final String LIST_LABEL = "listLabel";
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + BluePageContactsDao.class.getName());
-    public static final String TABLE = "CONTACTS_MEMBERS";
+    public static final String TABLE = "CONTACTS";
     final ConcurrentHashMap<String, BluePageContactsModel> mModelMap = new ConcurrentHashMap<String, BluePageContactsModel>();
     protected Handler mCallbackHandler = new Handler(Looper.getMainLooper());
     private static BluePageContactsDao sInstance;
@@ -157,14 +137,6 @@ public class BluePageContactsDao {
             + NOTE + " TEXT,"
             + RELATION + " TEXT,"
             + PHOTO_URI + " TEXT,"
-
-            + PTT_NUMBER + " TEXT,"
-            + PTT_PHOTO_URI + " TEXT,"
-            + PTT_PRESENCE + " TEXT,"
-            + PTT_FAVORITE + " INTEGER DEFAULT 0,"
-            + PTT_ADHOC_MEMBER + " INTEGER DEFAULT 0,"
-            + PTT_UPDATED + " INTEGER DEFAULT 0,"
-
             + SEARCH_KEY + " TEXT,"
             + LIST_LABEL + " TEXT);";
         db.execSQL(sql);
@@ -190,7 +162,7 @@ public class BluePageContactsDao {
     }
 
     private void putModelInstance(BluePageContactsModel model) {
-        mModelMap.put(model.getTypicalId(), model);
+        mModelMap.put(model.getLookupKey(), model);
     }
 
     private void removeModelInstance(String key) {
@@ -199,29 +171,11 @@ public class BluePageContactsDao {
         }
     }
 
-    public Loader<ArrayList<BluePageContactsModel>> getAllDataLoader() {
+    public Loader<ArrayList<BluePageContactsModel>> getContactsLoader() {
         return new BluePageContactsModelLoader<ArrayList<BluePageContactsModel>>(mAppContext, CONTENT_URI) {
             @Override
             public ArrayList<BluePageContactsModel> loadInBackground() {
                 return loadAll();
-            }
-        };
-    }
-
-    public Loader<ArrayList<BluePageContactsModel>> getOemContactsLoader() {
-        return new BluePageContactsModelLoader<ArrayList<BluePageContactsModel>>(mAppContext, CONTENT_URI) {
-            @Override
-            public ArrayList<BluePageContactsModel> loadInBackground() {
-                return loadAllOemContactsOnly();
-            }
-        };
-    }
-
-    public Loader<ArrayList<BluePageContactsModel>> getPttMembersLoader() {
-        return new BluePageContactsModelLoader<ArrayList<BluePageContactsModel>>(mAppContext, CONTENT_URI) {
-            @Override
-            public ArrayList<BluePageContactsModel> loadInBackground() {
-                return loadAllPttMembersOnly();
             }
         };
     }
@@ -234,40 +188,7 @@ public class BluePageContactsDao {
         if (db != null) {
             try {
                 db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, null, null, null, null, null);
-
-                if (cursor != null) {
-                    if (cursor.moveToFirst() == true) {
-                        do {
-                            BluePageContactsModel model = fromCursor(cursor);
-
-                            if (model != null) {
-                                result.add(model);
-                            }
-                        } while (cursor.moveToNext());
-                    }
-                    cursor.close();
-                }
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return result;
-    }
-
-    public synchronized ArrayList<BluePageContactsModel> loadAllOemContactsOnly() {
-        ArrayList<BluePageContactsModel> result = new ArrayList<BluePageContactsModel>();
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-
-        if (db != null) {
-            try {
-                final String where = "COALESCE (" + LOOKUP_KEY + ", '') <> ''";
-
-                db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, where, null, null, null,
+                Cursor cursor = db.query(TABLE, null, null, null, null, null,
                     DISPLAY_NAME + " COLLATE LOCALIZED ASC");
                 if (cursor != null) {
                     if (cursor.moveToFirst() == true) {
@@ -282,77 +203,6 @@ public class BluePageContactsDao {
                 }
 
                 db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return result;
-    }
-
-    public synchronized ArrayList<BluePageContactsModel> loadAllPttMembersOnly() {
-        ArrayList<BluePageContactsModel> result = new ArrayList<BluePageContactsModel>();
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-
-        if (db != null) {
-            try {
-                final String where = "COALESCE (" + PTT_NUMBER + ", '') <> ''";
-
-                db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, where, null, null, null,
-                    DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
-                if (cursor != null) {
-                    if (cursor.moveToFirst() == true) {
-                        do {
-                            BluePageContactsModel model = fromCursor(cursor);
-                            if (model != null) {
-                                result.add(model);
-                            }
-                        } while (cursor.moveToNext());
-                    }
-                    cursor.close();
-                }
-
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return result;
-    }
-
-    public synchronized ArrayList<BluePageContactsModel> loadAllPttAdhocMembersOnly() {
-        ArrayList<BluePageContactsModel> result = new ArrayList<BluePageContactsModel>();
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-
-        if (db != null) {
-            try {
-                final String where = PTT_ADHOC_MEMBER + "=?";
-                final String[] whereArgs = { String.valueOf(1) };
-
-                db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, where, whereArgs, null, null,
-                    DISPLAY_NAME + " COLLATE LOCALIZED ASC");
-
-                if (cursor != null) {
-                    if (cursor.moveToFirst() == true) {
-                        do {
-                            BluePageContactsModel model = fromCursor(cursor);
-                            if (model != null) {
-                                result.add(model);
-                            }
-                        } while (cursor.moveToNext());
-                    }
-                    cursor.close();
-                }
-
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
             } finally {
                 db.endTransaction();
             }
@@ -397,7 +247,7 @@ public class BluePageContactsDao {
             } catch (Exception e) {
                 notifyCallbackFailure(callback, e.getMessage());
                 Log.e("", e.getMessage(), e);
-            }finally {
+            } finally {
                 mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
                 db.endTransaction();
                 notifyCallbackCompleted(callback, null);
@@ -416,36 +266,12 @@ public class BluePageContactsDao {
         String[] whereArgs = null;
 
         if (StringUtils.isNotEmpty(contactModel.getLookupKey())) {
-            if (StringUtils.isNotEmpty(contactModel.getPttNumber())) {
-                model = loadOneByPttNumber(contactModel.getPttNumber(), false);
-                where = PTT_NUMBER + "=?";
-                whereArgs = new String[] { contactModel.getPttNumber() };
-
-                if (StringUtils.isEmpty(contactModel.getDisplayName())) {
-                    contactModel.setDisplayName(contactModel.getPttNumber());
-                }
-            } else {
-                model = loadOneByLookupKey(contactModel.getLookupKey(), false);
-                where = LOOKUP_KEY + "=?";
-                whereArgs = new String[] { contactModel.getLookupKey() };
-
-                if (StringUtils.isEmpty(contactModel.getDisplayName())) {
-                    contactModel.setDisplayName(contactModel.getPhonePrimary());
-                }
-            }
-        } else if (StringUtils.isNotEmpty(contactModel.getPttNumber())) {
-            if (contactModel.getId() > 0) {
-                model = loadOneById(contactModel.getId());
-                where = ID + "=?";
-                whereArgs = new String[] { String.valueOf(contactModel.getId()) };
-            } else {
-                model = loadOneByPttNumber(contactModel.getPttNumber(), false);
-                where = PTT_NUMBER + "=?";
-                whereArgs = new String[] { contactModel.getPttNumber() };
-            }
+            model = loadOneByLookupKey(contactModel.getLookupKey(), false);
+            where = LOOKUP_KEY + "=?";
+            whereArgs = new String[] { contactModel.getLookupKey() };
 
             if (StringUtils.isEmpty(contactModel.getDisplayName())) {
-                contactModel.setDisplayName(contactModel.getPttNumber());
+                contactModel.setDisplayName(contactModel.getPhonePrimary());
             }
         } else {
             return;
@@ -499,13 +325,6 @@ public class BluePageContactsDao {
         values.put(RELATION, contactModel.getRelation());
         values.put(PHOTO_URI, contactModel.getPhotoUri());
 
-        values.put(PTT_NUMBER, contactModel.getPttNumber());
-        values.put(PTT_PHOTO_URI, contactModel.getPttPhotoUri());
-        values.put(PTT_PRESENCE, contactModel.getPttPresence());
-        values.put(PTT_FAVORITE, contactModel.isFavorite() == true ? 1 : 0);
-        values.put(PTT_ADHOC_MEMBER, contactModel.isAdhocMember() == true ? 1 : 0);
-        values.put(PTT_UPDATED, 1);
-
         values.put(SEARCH_KEY, UtilHangul.getHangulInitialSound(contactModel.getDisplayName()));
         values.put(LIST_LABEL, UtilHangul.getHangulInitialSound(contactModel.getDisplayName().substring(0, 1)));
 
@@ -515,9 +334,9 @@ public class BluePageContactsDao {
         }
 
         if (model != null) {
-            removeModelInstance(getTypicalMemberId(model));
+            removeModelInstance(model.getLookupKey());
         } else {
-            removeModelInstance(getTypicalMemberId(contactModel));
+            removeModelInstance(contactModel.getLookupKey());
         }
     }
 
@@ -729,129 +548,6 @@ public class BluePageContactsDao {
         return result;
     }
 
-    public BluePageContactsModel loadOneByPttNumber(String pttNumber, boolean bClone) {
-        BluePageContactsModel model = null;
-
-        if (!bClone) {
-            model = getModelInstance(pttNumber);
-            if (model != null) {
-                return model;
-            }
-        }
-
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-
-        if (db != null) {
-            try {
-                final String where = PTT_NUMBER + "=?";
-                final String[] whereArgs = { pttNumber };
-
-                db.beginTransaction();
-                Cursor cursor = db.query(TABLE, null, where, whereArgs, null, null, null, "1");
-                if (cursor != null) {
-                    if (cursor.moveToFirst()) {
-                        model = fromCursor(cursor);
-                    }
-                    cursor.close();
-                }
-
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return model;
-    }
-
-    public ArrayList<BluePageContactsModel> loadByPttNumbers(String pttNumbers, boolean bClone) {
-        ArrayList<BluePageContactsModel> result = new ArrayList<BluePageContactsModel>();
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-        ArrayList<String> pttNumberList = null;
-
-        if (db != null) {
-            if (pttNumbers != null) {
-                String[] array = StringUtils.splitByWholeSeparatorPreserveAllTokens(pttNumbers, ";");
-                if (array != null) {
-                    pttNumberList = new ArrayList<String>(Arrays.asList(array));
-                }
-            }
-
-            try {
-
-                db.beginTransaction();
-                if (pttNumberList != null) {
-                    for (String pttNumber : pttNumberList) {
-                        BluePageContactsModel model = null;
-
-                        if (!bClone) {
-                            model = getModelInstance(pttNumber);
-                        }
-
-                        if (model == null) {
-                            final String where = PTT_NUMBER + "=?";
-                            final String[] whereArgs = { pttNumber };
-
-                            Cursor cursor = db.query(TABLE, null, where, whereArgs, null, null, null, "1");
-                            if (cursor != null) {
-                                if (cursor.moveToFirst()) {
-                                    model = fromCursor(cursor);
-                                }
-                                cursor.close();
-                            }
-                        }
-
-                        if (model != null) {
-                            result.add(model);
-                        }
-                    }
-                }
-
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return result;
-    }
-
-
-    public void deleteOneById(int _id, final ContactsDaoCallBack<Void> callback) {
-        int deletedCount = 0;
-
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-        BluePageContactsModel memberModel = loadOneById(_id);
-
-        if (db != null) {
-            try {
-                final String where = ID + "=?";
-                final String[] whereArgs = { String.valueOf(_id) };
-
-                db.beginTransaction();
-                deletedCount = db.delete(TABLE, where, whereArgs);
-                if (deletedCount == 1) {
-                    if (memberModel != null) {
-                        removeModelInstance(memberModel.getTypicalId());
-                    }
-                }
-
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                notifyCallbackCompleted(callback, null);
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
-    }
-
     public void deleteOneByLookupKey(String lookupKey, final ContactsDaoCallBack<Void> callback) {
         int deletedCount = 0;
 
@@ -910,93 +606,9 @@ public class BluePageContactsDao {
         }
     }
 
-    public void deleteOneByPttNumber(String pttNumber, final ContactsDaoCallBack<Void> callback) {
-        int deletedCount = 0;
-
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = PTT_NUMBER + "=?";
-                final String[] whereArgs = { pttNumber };
-
-                db.beginTransaction();
-                deletedCount = db.delete(TABLE, where, whereArgs);
-                if (deletedCount == 1) {
-                    removeModelInstance(pttNumber);
-                }
-
-                db.setTransactionSuccessful();
-
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                notifyCallbackCompleted(callback, null);
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void deleteByPttNumberList(ArrayList<String> pttNumberList, final ContactsDaoCallBack<Void> callback) {
-        int deletedCount = 0;
-
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-
-        if (db != null) {
-            try {
-                final String where = PTT_NUMBER + "=?";
-
-                db.beginTransaction();
-                for (String lookupKey : pttNumberList) {
-                    final String[] whereArgs = { lookupKey };
-                    deletedCount = db.delete(TABLE, where, whereArgs);
-                    if (deletedCount == 1) {
-                        removeModelInstance(lookupKey);
-                    }
-                }
-
-                db.setTransactionSuccessful();
-
-            } catch (Exception e) {
-                Log.e("", e.getMessage(), e);
-            } finally {
-                notifyCallbackCompleted(callback, null);
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
-    }
-
-    public void resetAllMembersUpdated() {
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getWritableDB();
-        ContentValues values = new ContentValues();
-
-        if (db != null) {
-            try {
-                db.beginTransaction();
-                values.put(PTT_UPDATED, 0);
-                db.update(TABLE, values, null, null);
-                db.setTransactionSuccessful();
-            } finally {
-                mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
-                db.endTransaction();
-            }
-        }
-
-        for (String groupId : mModelMap.keySet()) {
-            BluePageContactsModel model = getModelInstance(groupId);
-            model.setUpdated(0);
-            putModelInstance(model);
-        }
-    }
-
     private BluePageContactsModel fromCursor(Cursor cursor) {
         BluePageContactsModel model = new BluePageContactsModel();
-        String phonePrimary = "", typicalId = "";
+        String phonePrimary = "";
 
         model.setId(cursor.getInt(cursor.getColumnIndex(ID)));
         model.setContactId(cursor.getString(cursor.getColumnIndex(CONTACT_ID)));
@@ -1043,24 +655,11 @@ public class BluePageContactsDao {
         model.setNote(cursor.getString(cursor.getColumnIndex(NOTE)));
         model.setRelation(cursor.getString(cursor.getColumnIndex(RELATION)));
         model.setPhotoUri(cursor.getString(cursor.getColumnIndex(PHOTO_URI)));
-
-        model.setPttNumber(cursor.getString(cursor.getColumnIndex(PTT_NUMBER)));
-        model.setPttPhotoUri(cursor.getString(cursor.getColumnIndex(PTT_PHOTO_URI)));
-        model.setPttPresence(cursor.getString(cursor.getColumnIndex(PTT_PRESENCE)));
-
         model.setSearchKey(cursor.getString(cursor.getColumnIndex(SEARCH_KEY)));
         model.setListLabel(cursor.getString(cursor.getColumnIndex(LIST_LABEL)));
-        model.setFavorite(cursor.getInt(cursor.getColumnIndex(PTT_FAVORITE)) == 1 ? true : false);
-        model.setAdhocMember(cursor.getInt(cursor.getColumnIndex(PTT_ADHOC_MEMBER)) == 1 ? true : false);
-        model.setUpdated(cursor.getInt(cursor.getColumnIndex(PTT_UPDATED)));
 
         phonePrimary = getPrimaryNumber(model);
         model.setPhonePrimary(phonePrimary);
-
-        typicalId = getTypicalMemberId(model);
-        model.setTypicalId(typicalId);
-
-        model.setDataList();
 
         putModelInstance(model);
 
@@ -1071,367 +670,15 @@ public class BluePageContactsDao {
         mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
     }
 
-    public void updateToOemContact(BluePageContactsModel newModel) {
-        BluePageContactsModel oldModel;
-        String contactId = "", lookupKey = newModel.getLookupKey();
-        ArrayList<ContentProviderOperation> cpoList = new ArrayList<ContentProviderOperation>();
-        Uri lookupUri;
-        String[] projection = ArrayUtils.toArray(ContactsContract.Contacts._ID);
-        Cursor cursor;
-
-
-
-        if (StringUtils.isEmpty(lookupKey)) {
-            return;
-        }
-
-        lookupUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, lookupKey);
-        cursor = mAppContext.getContentResolver().query(lookupUri, projection, null, null, null);
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                contactId = Long.toString(cursor.getLong(0));
-            }
-            cursor.close();
-        } else {
-            return;
-        }
-
-        if (StringUtils.isEmpty(contactId)) {
-            return;
-        }
-
-        oldModel = loadOneByLookupKey(lookupKey, true);
-        if (oldModel == null) {
-            return;
-        }
-
-        // Display Name
-        if (!oldModel.getDisplayName().equals(newModel.getDisplayName())) {
-            addContactNameCPO(cpoList, contactId, ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                oldModel.getDisplayName(), newModel.getDisplayName());
-        }
-
-        // Family Name
-        if (!oldModel.getFamilyName().equals(newModel.getFamilyName())) {
-            addContactNameCPO(cpoList, contactId, ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-                oldModel.getFamilyName(), newModel.getFamilyName());
-        }
-
-        // Middle Name
-        if (!oldModel.getMiddleName().equals(newModel.getMiddleName())) {
-            addContactNameCPO(cpoList, contactId, ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,
-                oldModel.getMiddleName(), newModel.getMiddleName());
-        }
-
-        // Given Name
-        if (!oldModel.getGivenName().equals(newModel.getGivenName())) {
-            addContactNameCPO(cpoList, contactId, ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-                oldModel.getGivenName(), newModel.getGivenName());
-        }
-
-        // Phone Mobile1
-        if (!oldModel.getPhoneMobile1().replaceAll("-", "").equals(newModel.getPhoneMobile1().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
-                oldModel.getPhoneMobile1(), newModel.getPhoneMobile1());
-        }
-
-        // Phone Mobile2
-        if (!oldModel.getPhoneMobile2().replaceAll("-", "").equals(newModel.getPhoneMobile2().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
-                oldModel.getPhoneMobile2(), newModel.getPhoneMobile2());
-        }
-
-        // Phone Mobile3
-        if (!oldModel.getPhoneMobile3().replaceAll("-", "").equals(newModel.getPhoneMobile3().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
-                oldModel.getPhoneMobile3(), newModel.getPhoneMobile3());
-        }
-
-        // Phone Home1
-        if (!oldModel.getPhoneHome1().replaceAll("-", "").equals(newModel.getPhoneHome1().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_HOME,
-                oldModel.getPhoneHome1(), newModel.getPhoneHome1());
-        }
-
-        // Phone Home2
-        if (!oldModel.getPhoneHome2().replaceAll("-", "").equals(newModel.getPhoneHome2().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_HOME,
-                oldModel.getPhoneHome2(), newModel.getPhoneHome2());
-        }
-
-        // Phone Work1
-        if (!oldModel.getPhoneWork1().replaceAll("-", "").equals(newModel.getPhoneWork1().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_WORK,
-                oldModel.getPhoneWork1(), newModel.getPhoneWork1());
-        }
-
-        // Phone Work2
-        if (!oldModel.getPhoneWork2().replaceAll("-", "").equals(newModel.getPhoneWork2().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_WORK,
-                oldModel.getPhoneWork2(), newModel.getPhoneWork2());
-        }
-
-        // Fax Home
-        if (!oldModel.getFaxHome().replaceAll("-", "").equals(newModel.getFaxHome().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME,
-                oldModel.getFaxHome(), newModel.getFaxHome());
-        }
-
-        // Fax Work
-        if (!oldModel.getFaxWork().replaceAll("-", "").equals(newModel.getFaxWork().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK,
-                oldModel.getFaxWork(), newModel.getFaxWork());
-        }
-
-        // Pager
-        if (!oldModel.getPager().replaceAll("-", "").equals(newModel.getPager().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_PAGER,
-                oldModel.getPager(), newModel.getPager());
-        }
-
-        // Phone Other1
-        if (!oldModel.getOtherPhone1().replaceAll("-", "").equals(newModel.getOtherPhone1().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_OTHER,
-                oldModel.getOtherPhone1(), newModel.getOtherPhone1());
-        }
-
-        // Phone Other2
-        if (!oldModel.getOtherPhone2().replaceAll("-", "").equals(newModel.getOtherPhone2().replaceAll("-", ""))) {
-            addContactPhoneCPO(cpoList, contactId, ContactsContract.CommonDataKinds.Phone.TYPE_OTHER,
-                oldModel.getOtherPhone2(), newModel.getOtherPhone2());
-        }
-
-        // Phone Custom
-        if (!oldModel.getCustomPhone().replaceAll("-", "").equals(newModel.getCustomPhone().replaceAll("-", ""))) {
-            addContactCustomPhoneCPO(cpoList, contactId, oldModel.getCustomPhone(), newModel.getCustomPhone(),
-                oldModel.getCustomPhoneType());
-        }
-
-        // ///////////////////////////////
-        // Finally, Update or Insert
-        // ///////////////////////////////
-        if (cpoList.size() > 0) {
-            try {
-                mAppContext.getContentResolver().applyBatch(ContactsContract.AUTHORITY, cpoList);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                // You have to delete and retrain this contact because lookupkey can be changed if you edit the name of contact.
-                deleteOneByLookupKey(lookupKey, null);
-            }
-        }
-    }
-
-    private ArrayList<Long> getRawContactIdList(String contactId) {
-        ArrayList<Long> rawContactIdList = new ArrayList<Long>();
-        try {
-            Cursor rawContactCursor = mAppContext.getContentResolver().query(
-                ContactsContract.RawContacts.CONTENT_URI,
-                null,
-                ContactsContract.Data.CONTACT_ID + " = ?",
-                new String[] { contactId },
-                null);
-
-            if (rawContactCursor != null) {
-                try {
-                    while (rawContactCursor.moveToNext()) {
-                        long rawId = rawContactCursor.getLong(rawContactCursor
-                            .getColumnIndex(ContactsContract.RawContacts._ID));
-                        rawContactIdList.add(rawId);
-                    }
-                } finally {
-                    rawContactCursor.close();
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
-
-        return rawContactIdList;
-    }
-
-    private void addContactNameCPO(ArrayList<ContentProviderOperation> cpoList,
-        String contactId, String nameType, String oldName, String newName) {
-
-        ArrayList<Long> rawContactIdList = getRawContactIdList(contactId);
-
-        if (rawContactIdList.size() > 0) {
-            long rawContactId = 0, dataId = 0;
-
-            for (long rawId : rawContactIdList) {
-                // Make sure the "last checked" RawContactId is set locally for use in insert & update.
-                rawContactId = rawId;
-                String sel = ContactsContract.Data.RAW_CONTACT_ID + " = ? AND "
-                    + ContactsContract.Data.MIMETYPE + " = ? AND "
-                    + nameType + " = ? ";
-                String[] selArg = new String[] { Long.toString(rawContactId),
-                    ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE,
-                    oldName };
-                Cursor dataCursor = mAppContext.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null,
-                    sel, selArg, null);
-
-                if (dataCursor != null) {
-                    if (dataCursor.getCount() > 0) {
-                        dataCursor.moveToFirst();
-                        dataId = dataCursor.getLong(dataCursor.getColumnIndex(ContactsContract.Data._ID));
-                        dataCursor.close();
-                        break;
-                    } else {
-                        dataCursor.close();
-                    }
-                }
-            }
-
-            try {
-                if (dataId > 0) {
-                    // Update
-                    cpoList.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(ContactsContract.Data.RAW_CONTACT_ID + " = ?",
-                            new String[] { Long.toString(rawContactId) })
-                            .withSelection(ContactsContract.Data._ID + " = ?", new String[] { Long.toString(dataId) })
-                            .withValue(nameType, newName)
-                            .build());
-                } else {
-                    // Insert
-                    cpoList.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, Long.toString(rawContactId))
-                        .withValue(ContactsContract.Data.MIMETYPE,
-                            ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                            .withValue(nameType, newName)
-                            .build());
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void addContactPhoneCPO(ArrayList<ContentProviderOperation> cpoList,
-        String contactId, int phoneType, String oldNumber, String newNumber) {
-
-        ArrayList<Long> rawContactIdList = getRawContactIdList(contactId);
-
-        if (rawContactIdList.size() > 0) {
-            long rawContactId = 0, dataId = 0;
-
-            for (long rawId : rawContactIdList) {
-                // Make sure the "last checked" RawContactId is set locally for use in insert & update.
-                rawContactId = rawId;
-                String sel = ContactsContract.Data.RAW_CONTACT_ID + " = ? AND "
-                    + ContactsContract.Data.MIMETYPE + " = ? AND "
-                    + ContactsContract.CommonDataKinds.Phone.TYPE + " = ? AND "
-                    + ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-                String[] selArg = new String[] { Long.toString(rawContactId),
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                    String.valueOf(phoneType),
-                    oldNumber };
-                Cursor dataCursor = mAppContext.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null,
-                    sel, selArg, null);
-
-                if (dataCursor != null) {
-                    if (dataCursor.getCount() > 0) {
-                        dataCursor.moveToFirst();
-                        dataId = dataCursor.getLong(dataCursor.getColumnIndex(ContactsContract.Data._ID));
-                        dataCursor.close();
-                        break;
-                    } else {
-                        dataCursor.close();
-                    }
-                }
-            }
-
-            try {
-                if (dataId > 0) {
-                    // Update
-                    cpoList.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(ContactsContract.Data.RAW_CONTACT_ID + " = ?",
-                            new String[] { Long.toString(rawContactId) })
-                            .withSelection(ContactsContract.Data._ID + " = ?", new String[] { Long.toString(dataId) })
-                            .withSelection(ContactsContract.CommonDataKinds.Phone.TYPE + " = ?",
-                                new String[] { String.valueOf(phoneType) })
-                                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, newNumber)
-                                .build());
-                } else {
-                    // Insert
-                    cpoList.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValue(ContactsContract.Data.RAW_CONTACT_ID, Long.toString(rawContactId))
-                        .withValue(ContactsContract.Data.MIMETYPE,
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                            .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, newNumber)
-                            .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, String.valueOf(phoneType))
-                            .build());
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void addContactCustomPhoneCPO(ArrayList<ContentProviderOperation> cpoList,
-        String contactId, String oldNumber, String newNumber, String customType) {
-
-        ArrayList<Long> rawContactIdList = getRawContactIdList(contactId);
-        long rawContactId = 0, dataId = 0;
-
-        if (rawContactIdList.size() > 0) {
-            for (long rawId : rawContactIdList) {
-                // Make sure the "last checked" RawContactId is set locally for use in insert & update.
-                rawContactId = rawId;
-                String sel = ContactsContract.Data.RAW_CONTACT_ID + " = ? AND "
-                    + ContactsContract.Data.MIMETYPE + " = ? AND "
-                    + ContactsContract.CommonDataKinds.Phone.TYPE + " = ? AND "
-                    + ContactsContract.CommonDataKinds.Phone.NUMBER + " = ? AND "
-                    + ContactsContract.CommonDataKinds.Phone.LABEL + " = ? ";
-                String[] selArg = new String[] { Long.toString(rawContactId),
-                    ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                    String.valueOf(ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM),
-                    oldNumber,
-                    customType };
-                Cursor dataCursor = mAppContext.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null,
-                    sel, selArg, null);
-
-                if (dataCursor != null) {
-                    if (dataCursor.getCount() > 0) {
-                        dataCursor.moveToFirst();
-                        dataId = dataCursor.getLong(dataCursor.getColumnIndex(ContactsContract.Data._ID));
-                        dataCursor.close();
-                        break;
-                    } else {
-                        dataCursor.close();
-                    }
-                }
-            }
-
-            try {
-                if (dataId > 0) {
-                    // Update
-                    cpoList.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                        .withSelection(ContactsContract.Data.RAW_CONTACT_ID + " = ?",
-                            new String[] { Long.toString(rawContactId) })
-                            .withSelection(ContactsContract.Data._ID + " = ?", new String[] { Long.toString(dataId) })
-                            .withSelection(ContactsContract.CommonDataKinds.Phone.TYPE + " = ?",
-                                new String[] { String.valueOf(ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM) })
-                                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, newNumber)
-                                .build());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void doCheckOemContactsUpdated(long lastUpdate, final ContactsDaoCallBack<Void> callback) {
-        OemContactsUpdateCheckTask updateChecker = new OemContactsUpdateCheckTask(callback);
+    public void doCheckContactsUpdated(long lastUpdate, final ContactsDaoCallBack<Void> callback) {
+        ContactsUpdateCheckTask updateChecker = new ContactsUpdateCheckTask(callback);
         updateChecker.execute(lastUpdate);
     }
 
-    private class OemContactsUpdateCheckTask extends AsyncTask<Long, Void, Void> {
+    private class ContactsUpdateCheckTask extends AsyncTask<Long, Void, Void> {
         ContactsDaoCallBack<Void> callback;
 
-        public OemContactsUpdateCheckTask(final ContactsDaoCallBack<Void> cb) {
+        public ContactsUpdateCheckTask(final ContactsDaoCallBack<Void> cb) {
             callback = cb;
         }
 
@@ -1442,8 +689,8 @@ public class BluePageContactsDao {
 
         @Override
         protected Void doInBackground(Long... params) {
-            checkOnlyUpdatedOemContacts(params[0]);
-            checkOnlyDeletedOemContacts();
+            checkOnlyUpdatedContacts(params[0]);
+            checkOnlyDeletedContacts();
 
             return null;
         }
@@ -1451,13 +698,13 @@ public class BluePageContactsDao {
         @Override
         protected void onPostExecute(Void result) {
             PreferenceManager.getDefaultSharedPreferences(mAppContext).edit()
-                .putLong(BluePageConfig.PREF_KEY_CONTACTS_MEMBERS_UPDATE_TIMESTAMP, System.currentTimeMillis()).apply();
+            .putLong(BluePageConfig.PREF_KEY_CONTACTS_UPDATE_TIMESTAMP, System.currentTimeMillis()).apply();
             notifyCallbackCompleted(callback, null);
         }
     }
 
     @SuppressLint("InlinedApi")
-    private void checkOnlyUpdatedOemContacts(long lastUpdated) {
+    private void checkOnlyUpdatedContacts(long lastUpdated) {
         Uri contactsUri = ContactsContract.Contacts.CONTENT_URI;
         ArrayList<BluePageContactsModel> resultList = new ArrayList<BluePageContactsModel>();
         String selection = ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + ">?" + " AND "
@@ -1521,8 +768,6 @@ public class BluePageContactsDao {
                     String phonePrimary = "";
                     String searchKey = "";
                     String listLabel = "";
-                    String typicalId = "";
-                    String pttNumber = "";
 
                     Cursor dataCursor = mAppContext.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null,
                         ContactsContract.Data.CONTACT_ID + "=" + contactId, null, null);
@@ -1828,21 +1073,11 @@ public class BluePageContactsDao {
                                 model.setRelation(relation);
                                 model.setPhotoUri(photoUri);
 
-                                model.setPttNumber(pttNumber);
-                                model.setPttPhotoUri("");
-                                model.setPttPresence("");
-                                model.setFavorite(false);
-                                model.setAdhocMember(StringUtils.isNotEmpty(pttNumber) ? true : false);
-                                model.setUpdated(0);
-
                                 model.setSearchKey(searchKey);
                                 model.setListLabel(listLabel);
 
                                 phonePrimary = getPrimaryNumber(model);
                                 model.setPhonePrimary(phonePrimary);
-
-                                typicalId = getTypicalMemberId(model);
-                                model.setTypicalId(typicalId);
 
                                 resultList.add(model);
                             }
@@ -1859,7 +1094,7 @@ public class BluePageContactsDao {
         }
     }
 
-    private void checkOnlyDeletedOemContacts() {
+    private void checkOnlyDeletedContacts() {
         HashSet<String> lookupKeySet = new HashSet<String>();
         BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
         SQLiteDatabase db = dbMgr.getReadableDB();
@@ -1871,7 +1106,6 @@ public class BluePageContactsDao {
                 db.beginTransaction();
                 localCursor = db.query(TABLE, new String[] { LOOKUP_KEY }, null, null, null, null, null);
 
-                // 1. Get lookupKeys on local contacts DB.
                 if (localCursor != null) {
                     if (localCursor.moveToFirst()) {
                         do {
@@ -1889,25 +1123,23 @@ public class BluePageContactsDao {
                 db.endTransaction();
             }
 
-            // 2. Get lookupKeys on OEM contacts DB.
             Uri contactsUri = ContactsContract.Contacts.CONTENT_URI;
-            Cursor oemContactsCursor = mAppContext.getContentResolver().query(contactsUri,
+            Cursor contactsCursor = mAppContext.getContentResolver().query(contactsUri,
                 new String[] { ContactsContract.Contacts.LOOKUP_KEY }, null, null, null);
 
-            if (oemContactsCursor != null) {
-                if (oemContactsCursor.moveToFirst()) {
+            if (contactsCursor != null) {
+                if (contactsCursor.moveToFirst()) {
                     do {
-                        lookupKey = oemContactsCursor.getString(0);
+                        lookupKey = contactsCursor.getString(0);
                         if (StringUtils.isNotEmpty(lookupKey)) {
                             lookupKeySet.remove(lookupKey);
                         }
-                    } while (oemContactsCursor.moveToNext());
+                    } while (contactsCursor.moveToNext());
                 }
-                oemContactsCursor.close();
+                contactsCursor.close();
             }
 
-            // 3. Finally, delete it if OEM contact was deleted.
-            if (lookupKeySet.size() > 0) {
+            if (lookupKeySet.size() <= 0) {
                 deleteByLookupKeyList(new ArrayList<String>(lookupKeySet), null);
             } else {
                 mAppContext.getContentResolver().notifyChange(CONTENT_URI, null);
@@ -1915,41 +1147,10 @@ public class BluePageContactsDao {
         }
     }
 
-    public void doUpdateToOemContacts(BluePageContactsModel newModel, final ContactsDaoCallBack<Void> callback) {
-        UpdateToOemContactsTask oemUpdater = new UpdateToOemContactsTask(callback);
-        oemUpdater.execute(newModel);
-    }
-
-    private class UpdateToOemContactsTask extends AsyncTask<BluePageContactsModel, Void, Void> {
-        ContactsDaoCallBack<Void> callback;
-
-        public UpdateToOemContactsTask(final ContactsDaoCallBack<Void> cb) {
-            callback = cb;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(BluePageContactsModel... params) {
-            updateToOemContact(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            notifyCallbackCompleted(callback, null);
-        }
-    }
-
     private String getPrimaryNumber(BluePageContactsModel model) {
         String primaryNumber;
 
-        if (StringUtils.isNotEmpty(model.getPttNumber())) {
-            primaryNumber = model.getPttNumber();
-        } else if (StringUtils.isNotEmpty(model.getPhoneMobile1())) {
+        if (StringUtils.isNotEmpty(model.getPhoneMobile1())) {
             primaryNumber = model.getPhoneMobile1();
         } else if (StringUtils.isNotEmpty(model.getPhoneMobile2())) {
             primaryNumber = model.getPhoneMobile2();
@@ -1982,20 +1183,6 @@ public class BluePageContactsDao {
         return primaryNumber;
     }
 
-    private String getTypicalMemberId(BluePageContactsModel model) {
-        String typicalId = "";
-
-        if (StringUtils.isNotEmpty(model.getLookupKey())) {
-            typicalId = model.getLookupKey();
-        }
-
-        if (StringUtils.isNotEmpty(model.getPttNumber())) {
-            typicalId = model.getPttNumber();
-        }
-
-        return typicalId;
-    }
-
     private <T> void notifyCallbackCompleted(final BluePageContactsDao.ContactsDaoCallBack<T> l, final T data) {
         if (l == null) {
             return;
@@ -2019,45 +1206,4 @@ public class BluePageContactsDao {
             }
         });
     }
-
-    /**
-     * find members containing search string from ptt_number, display_name
-     * @param searchStr
-     * @return
-     */
-    public ArrayList<BluePageContactsModel> search(String searchStr) {
-        ArrayList<BluePageContactsModel> result = new ArrayList<BluePageContactsModel>();
-        BluePageContactsDBManager dbMgr = BluePageContactsDBManager.getInstance(mAppContext);
-        SQLiteDatabase db = dbMgr.getReadableDB();
-
-        if (db != null) {
-
-            db.beginTransaction();
-            try {
-                StringBuffer strbuf = new StringBuffer();
-                strbuf.append("select * from ").append(TABLE).append(" ")
-                .append(" where ").append(PTT_NUMBER).append(" like '%").append(searchStr).append("%' ")
-                .append(" or ").append(DISPLAY_NAME).append(" like '%").append(searchStr).append("%' ");
-
-                Cursor cursor = db.rawQuery(strbuf.toString(), null);
-
-                if(cursor.moveToFirst() == false) {
-                    cursor.close();
-                    return result;
-                }
-
-                while(!cursor.isAfterLast()) {
-                    result.add(fromCursor(cursor));
-                    cursor.moveToNext();
-                }
-                cursor.close();
-                db.setTransactionSuccessful();
-            } finally {
-                db.endTransaction();
-            }
-        }
-
-        return result;
-    }
-
 }

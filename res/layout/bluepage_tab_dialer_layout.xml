@@ -1,0 +1,401 @@
+﻿<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bluepage_keypad_bg"
+    android:orientation="vertical" >
+
+    <!-- title bar -->
+
+
+    <!-- 전화번호 Text -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#eeeeee"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/phone_key_num_view_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLength="32"
+            android:textColor="#000000"
+            android:textSize="@dimen/call_text_area_font_size" />
+    </LinearLayout>
+    <!-- keypad -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d1d1d1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keypad_nor_height"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/phone_key_1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="2" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="ABC" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="3" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="DEF" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d1d1d1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keypad_nor_height"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/phone_key_4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="4" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="GHI" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="5" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="JKL" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="6" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="MNO" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d1d1d1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keypad_nor_height"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/phone_key_7"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="7" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="PQRS" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_8"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="8" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="TUV" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_9"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center_horizontal|bottom"
+                    android:text="9" />
+
+                <TextView
+                    style="@style/phone_key_type_small"
+                    android:text="WXYZ" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d1d1d1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keypad_nor_height"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/phone_key_star"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:text="*" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:text="0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_sharp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:orientation="vertical" >
+
+                <TextView
+                    style="@style/phone_key_type_large"
+                    android:gravity="center"
+                    android:text="#" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#d1d1d1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/keypad_opt_height"
+            android:orientation="horizontal" >
+
+            <RelativeLayout
+                android:id="@+id/phone_key_voice_call"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/btn_icon_audiocall" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_message"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/btn_icon_message" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#d1d1d1" />
+
+            <LinearLayout
+                android:id="@+id/phone_key_del"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bluepage_btn_phone_keypad"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/btn_icon_delete" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#d1d1d1" />
+    </LinearLayout>
+
+</LinearLayout>

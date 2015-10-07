@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/actionbar_common_background"
+    android:background="@color/bluepage_default_blue"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical" >
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/im_ripple"
+        android:background="@drawable/bluepage_select_selector"
         android:gravity="center"
         android:textColor="@color/contacts_tab_unselected_text_color"
         android:textSize="14dp" >

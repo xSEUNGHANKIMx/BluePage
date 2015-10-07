@@ -14,7 +14,7 @@
         android:background="@android:color/white"
         android:orientation="vertical" >
 
-        <com.example.bluepage.utils.CustomtTextView
+        <com.example.bluepage.utils.CustomTextView
             xmlns:custom="http://schemas.android.com/apk/res/com.example.bluepage"
             android:id="@id/contacts_listview_empty"
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_marginTop="50dip"
             android:background="@null"
             android:gravity="center"
-            android:text="@string/contacts_empty_view_label"
+            android:text="@string/bluepage_contacts_empty_view_label"
             android:textSize="17dp"
             android:visibility="gone" />
 

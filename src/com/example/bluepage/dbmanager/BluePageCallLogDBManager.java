@@ -1,11 +1,9 @@
 package com.example.bluepage.dbmanager;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.bluepage.BluePageConfig;
 
@@ -58,7 +56,7 @@ public class BluePageCallLogDBManager {
     static class BluePageCallLogDatabaseHelper extends SQLiteOpenHelper {
 
         protected static final String DB_NAME = BluePageConfig.BLUEPAGE_CALL_LOG_DB_NAME;
-        protected static final int DB_VERSION = 5;
+        protected static final int DB_VERSION = 1;
 
         BluePageCallLogDatabaseHelper(Context context) {
             super(context, DB_NAME, null, DB_VERSION);
@@ -79,32 +77,7 @@ public class BluePageCallLogDBManager {
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             switch (oldVersion) {
                 case 1:
-                    db.execSQL("DROP TABLE IF EXISTS " + BluePageCallLogDao.TABLE);
-                    onCreate(db);
                     // fall through
-                case 2:
-                    addColumn(db, BluePageCallLogDao.TABLE, BluePageCallLogDao.COLUMN_SIP_URI, "TEXT", "NULL");
-                    // fall through
-                case 3:
-                    addColumn(db, BluePageCallLogDao.TABLE, BluePageCallLogDao.COLUMN_SERVER_SESSION_ID, "TEXT", "NULL");
-                    // fall through
-                case 4:
-                    addColumn(db, BluePageCallLogDao.TABLE, BluePageCallLogDao.COLUMN_SESSION_ID, "TEXT", "NULL");
-                    // fall through
-            }
-        }
-
-        private void addColumn(SQLiteDatabase db, String table, String column, String type, String defValue) {
-            Cursor c = db.query(table, null, null, null, null, null, null);
-
-            if (c != null) {
-                if (c.getColumnIndex(column) == -1) {
-                    String sql = "ALTER TABLE " + table + " ADD COLUMN " + column + " " + type + " DEFAULT " + defValue;
-                    db.execSQL(sql);
-                }
-                c.close();
-            } else {
-                Log.v(this.toString(), "Failed to add " + column + " into " + table);
             }
         }
     }
